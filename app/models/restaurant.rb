@@ -9,21 +9,21 @@ module RestaurantCollections
 
     class Restaurant
         def initialize(new_restaurant)
-            @id = new_restaurant['id'] || new_id
+            @id      = new_restaurant['id'] || new_id
             @website = new_restaurant['website']
-            @name = new_restaurant['name']
+            @name    = new_restaurant['name']
             @address = new_restaurant['address']
-            @menu = new_restaurant['menu'] #this will be a string for now, will be image later :D
+            @menu    = new_restaurant['menu'] # this will be a string for now, will be image later :D
         end
 
-        attr_reader :id, :name, :address, :menu
+        attr_reader :id, :website, :name, :address, :menu
 
         def to_json(options = {})
             JSON(
                 {
                     type: 'restaurant',
                     id: id,
-                    website: website
+                    website: website,
                     name: name,
                     address: address,
                     menu: menu
@@ -42,11 +42,13 @@ module RestaurantCollections
 
         def self.find(find_id)
             restaurant_data = File.read("#{RestaurantCollections::STORE_DIR}/#{find_id}.txt") 
-            Document.new JSON.parse(restaurant_data)
+            Restaurant.new JSON.parse(restaurant_data)
         end
 
         def self.all
-            Dir.glob("#{RestaurantCollections::STORE_DIR}/*.txt").map do |file| file.match(%r{#{Regexp.quote(RestaurantCollections::STORE_DIR)}\/(.*)\.txt})[1]
+            Dir.glob("#{RestaurantCollections::STORE_DIR}/*.txt").map do |file| 
+                file.match(%r{#{Regexp.quote(RestaurantCollections::STORE_DIR)}\/(.*)\.txt})[1]
+            end
         end
 
         private
