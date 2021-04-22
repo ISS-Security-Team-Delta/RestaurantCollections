@@ -27,10 +27,17 @@ module RestaurantCollections
         routing.on 'v1' do
           routing.on 'restaurants' do
             # GET api/v1/restaurants/[id]
-            
+            routing.get String do |id|
+              Restaurant.find(id).to_json
+            rescue StandardError
+              routin.halt 404, {message: 'Restaurant not found'}.to_json
+            end
 
             # GET api/v1/restaurants
-            
+            routing.get do
+              output = { document_ids: Restaurant.all }
+              JSON.pretty_generate(output)
+            end
 
             # POST api/v1/restaurants
             routing.post do
