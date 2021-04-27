@@ -24,7 +24,7 @@ module RestaurantCollections
     DB = Sequel.connect(config.DATABASE_URL)
 
     # Make the database accessible to other classes
-    def self.db
+    def self.DB
       DB
     end
 
