@@ -11,7 +11,8 @@ Sequel.migration do
       String :categories
       String :name, unique: true, null: false
       String :name_eng, unique: true
-      String :ingredients
+      String :cost
+      String :description
 
       DataTime :created_at
       DataTime :updated_at
