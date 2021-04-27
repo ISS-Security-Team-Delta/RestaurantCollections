@@ -12,3 +12,12 @@ Security/YAMLLoad:
   Enabled: true
   Exclude:
     - spec/**/*
+
+Layout/EndOfLine:
+  Enabled: False          # ignore the line endings warnings (cause of different in windows system...)
+
+require: rubocop-performance
+
+AllCops:
+  TargetRubyVersion: 3.0
+  NewCops: enable
