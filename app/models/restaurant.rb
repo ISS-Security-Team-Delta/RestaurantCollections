@@ -7,6 +7,7 @@ require 'rbnacl'
 module RestaurantCollections
   STORE_DIR = 'app/db/store'
 
+  # Restaurants' info
   class Restaurant
     def initialize(new_restaurant)
       @id      = new_restaurant['id'] || new_id
@@ -26,7 +27,8 @@ module RestaurantCollections
           name: name,
           address: address,
           menu: menu
-        }, options
+        },
+        options
       )
     end
 
@@ -39,7 +41,7 @@ module RestaurantCollections
     end
 
     def self.find(find_id)
-      restaurant_data = File.read("#{RestaurantCollections::STORE_DIR}/#{find_id}.txt") 
+      restaurant_data = File.read("#{RestaurantCollections::STORE_DIR}/#{find_id}.txt")
       Restaurant.new JSON.parse(restaurant_data)
     end
 
