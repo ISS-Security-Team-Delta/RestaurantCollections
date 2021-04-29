@@ -26,7 +26,7 @@ module RestaurantCollections
     def to_json(options = {})
       JSON(
         {
-        data: {
+          data: {
             type: 'restaurant',
             attributes: {
               website: website,
@@ -35,7 +35,7 @@ module RestaurantCollections
               menu: menu
             }
           }
-          }, options
+        }, options
       )
     end
 

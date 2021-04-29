@@ -6,7 +6,7 @@ require 'json'
 require_relative '../models/restaurant'
 
 module RestaurantCollections
-  # Web controller for Credence API
+  # Web controller for RestaurantCollections API
   class Api < Roda
     plugin :environments
     plugin :halt

@@ -33,6 +33,7 @@ desc 'Run application console (pry)'
 task :console => :print_env do
   sh 'pry -r ./spec/test_load_all'
 end
+
 # For Migrations
 namespace :db do
   require_relative 'config/environments'
