@@ -18,16 +18,7 @@ end
 # Run application console (pry)
 desc 'Run application console (pry)'
 task :console => :print_env do
-  require_relative 'config/environments' # load config info
-  require_relative 'app/controllers/app.rb'
-  require_relative 'app/models/restaurant.rb'
-  require_relative 'app/models/meal.rb'
-  require_relative 'app/models/comment.rb'
-  require_relative 'config/environments.rb'
-  require 'sequel'
-  proj1 = RestaurantCollections::Restaurant.create(website: 'hehe.com', name: 'hehe', address: 'hehe street', menu: 'yummy food')
-
-  puts proj1
+  sh 'pry -r ./spec/test_load_all'
 end
 # For Migrations
 namespace :db do
