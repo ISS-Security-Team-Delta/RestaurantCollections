@@ -5,10 +5,23 @@ require 'rake/testtask'
 task :default => :spec
 
 # Create custom tasks
+desc 'Test API specs only'
+task :api_spec do
+  sh 'ruby spec/api_spec.rb'
+end
 
 # Use predefined tasks
+desc 'Test all the specs'
+Rake::TestTask.new(:spec) do |t|
+  t.pattern = 'spec/*_spec.rb'
+  t.warning = false
+end
 
 # Define task dependencies
+desc 'Runs rubocop on tested code'
+task :style => [:spec, :audit] do
+  sh 'rubocop .'
+end
 
 # Print ENV
 task :print_env do
