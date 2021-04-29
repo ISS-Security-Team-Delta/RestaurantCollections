@@ -8,5 +8,5 @@ require_relative '../require_app'
 require_app
 
 def app
-  Credence::Api
+  RestaurantCollections::Api
 end
