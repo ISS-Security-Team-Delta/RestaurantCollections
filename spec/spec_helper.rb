@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ENV['RACK_ENV'] = 'test'
 
 require 'minitest/autorun'
@@ -11,4 +13,4 @@ def wipe_database
 end
 
 DATA = {}
-DATA[:restaurants] = YAML.safe_load File.read('app/db/seeds/restaurant_seeds.yml')
+DATA[:restaurants] = YAML.safe_load File.read('../app/db/seeds/restaurant_seeds.yml')
