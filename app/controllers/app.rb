@@ -11,13 +11,12 @@ module RestaurantCollections
     plugin :environments
     plugin :halt
 
-    configure do
-      Restaurant.setup
-    end
+    # configure do
+    #   Restaurant.setup
+    # end
 
     route do |routing|
       response['Content-Type'] = 'application/json'
-
       routing.root do
         response.status = 200
         { message: 'RestaurantCollection API up at /api/v1' }.to_json
@@ -30,7 +29,7 @@ module RestaurantCollections
             routing.get String do |id|
               Restaurant.find(id).to_json
             rescue StandardError
-              routin.halt 404, {message: 'Restaurant not found'}.to_json
+              routing.halt 404, { message: 'Restaurant not found' }.to_json
             end
 
             # GET api/v1/restaurants

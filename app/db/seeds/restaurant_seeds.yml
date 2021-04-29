@@ -1,9 +1,17 @@
 ---
+- website: hehe.com
+  name: hehe
+  address: hehe street
+  menu: yummy food
+- website: hehept2.com
+  name: hehe2
+  address: hehe2 street
+  menu: yummy food pt 2
 - name: Secrect
   website: http://SOMEWHERE
-  adress: SOMEWHERE
+  address: SOMEWHERE
   menu: PHOTO.jpg
 - name: TasteGood
   website: http://TasteGood
-  adress: TasteGood
+  address: TasteGood
   menu: meals.jpg

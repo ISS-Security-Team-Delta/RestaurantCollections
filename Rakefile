@@ -16,7 +16,10 @@ task :print_env do
 end
 
 # Run application console (pry)
-
+desc 'Run application console (pry)'
+task :console => :print_env do
+  sh 'pry -r ./spec/test_load_all'
+end
 # For Migrations
 namespace :db do
   require_relative 'config/environments'
@@ -40,7 +43,7 @@ namespace :db do
 
   desc 'Delete dev or test database file'
   task :drop do
-    if app.enviroment == :production
+    if app.environment == :production
       puts 'Cannot wipe production database!'
       return
     end
