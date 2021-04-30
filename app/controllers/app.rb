@@ -36,6 +36,7 @@ module RestaurantCollections
             routing.get do
               output = { document_ids: Restaurant.all }
               JSON.pretty_generate(output)
+              response.status = 200
             end
 
             # POST api/v1/restaurants
