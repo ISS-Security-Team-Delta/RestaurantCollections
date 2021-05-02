@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'spec_helper'
+require_relative './spec_helper'
 
 describe 'Test Project Handling' do
   include Rack::Test::Methods
@@ -34,7 +34,7 @@ describe 'Test Project Handling' do
   end
 
   it 'SAD: should return error if unknown project requested' do
-    get '/api/v1/restaurants/abcd' ### To be revised
+    get '/api/v1/restaurants/foobar'
     _(last_response.status).must_equal 404
   end
 

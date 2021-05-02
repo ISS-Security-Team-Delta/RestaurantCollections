@@ -29,6 +29,7 @@ module RestaurantCollections
           data: {
             type: 'restaurant',
             attributes: {
+              id: id,
               website: website,
               name: name,
               address: address,
