@@ -1,4 +1,4 @@
-
+# frozen_string_literal: true
 
 require_relative './spec_helper'
 
@@ -9,7 +9,7 @@ describe 'Test Project Handling' do
     wipe_database
   end
 
-  it 'HAPPY: should be able to get list of all projects' do
+  it 'HAPPY: should be able to get list of all restaurants' do
     RestaurantCollections::Restaurant.create(DATA[:restaurants][0]).save
     RestaurantCollections::Restaurant.create(DATA[:restaurants][1]).save
 
@@ -18,10 +18,9 @@ describe 'Test Project Handling' do
 
     result = JSON.parse last_response.body
     _(result['data'].count).must_equal 2
-
   end
 
-  it 'HAPPY: should be able to get details of a single project' do
+  it 'HAPPY: should be able to get details of a single restaurant' do
     existing_store = DATA[:restaurants][1]
     RestaurantCollections::Restaurant.create(existing_store).save
     id = RestaurantCollections::Restaurant.first.id
@@ -35,7 +34,7 @@ describe 'Test Project Handling' do
   end
 
   it 'SAD: should return error if unknown project requested' do
-    get '/api/v1/restaurants/abcd' ### To be revised
+    get '/api/v1/restaurants/foobar'
     _(last_response.status).must_equal 404
   end
 
