@@ -11,7 +11,7 @@ Sequel.migration do
       String :website, unique: true
       String :address, unique: true
       String :menu
-
+      
       DataTime :created_at
       DataTime :updated_at
     end
