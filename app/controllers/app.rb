@@ -21,12 +21,11 @@ module RestaurantCollections
           @restaurant_route = "#{@api_root}/restaurants"
 
           routing.on String do |restaurant_id|
-
             routing.on 'comments' do
               @comment_route = "#{@api_root}/restaurants/#{restaurant_id}/comments"
               # GET api/v1/restaurants/[restaurant_id]/comments/[comment_id]
               routing.get String do |comment_id|
-                comment = comment.where(restaurants_id: restaurant_id, id: comment_id).first
+                comment = Comment.where(restaurants_id: restaurant_id, id: comment_id).first
                 comment ? comment.to_json : raise('comment not found')
               rescue StandardError => e
                 routing.halt 404, { message: e.message }.to_json
@@ -40,22 +39,22 @@ module RestaurantCollections
                 routing.halt 404, message: 'Could not find comments'
               end
 
-              # POST api/v1/restaurants/[ID]/comments
+              # POST api/v1/restaurants/[restaurant_id]/comments
               routing.post do
                 new_data = JSON.parse(routing.body.read)
                 restaurant = Restaurant.first(id: restaurant_id)
-                new_comment = restaurant.add_mealument(new_data)
+                new_comment = restaurant.add_comment(new_data)
+                raise 'Could not save comment' unless new_comment
 
-                if new_comment
-                  response.status = 201
-                  response['Location'] = "#{@comment_route}/#{new_comment.id}"
-                  { message: 'comment saved', data: new_comment }.to_json
-                else
-                  routing.halt 400, 'Could not save mealument'
-                end
+                response.status = 201
+                response['Location'] = "#{@comment_route}/#{new_comment.id}"
+                { message: 'comment saved', data: new_comment }.to_json
 
-              rescue StandardError
-                routing.halt 500, { message: 'Database error' }.to_json
+              rescue Sequel::MassAssignmentRestriction
+                Api.logger.warn "MASS-ASSIGNMENT: #{new_data.keys}"
+                routing.halt 400, { message: 'Illegal Attributes' }.to_json
+              rescue StandardError => e
+                routing.halt 500, { message: e.message }.to_json
               end
             end
 
@@ -63,7 +62,7 @@ module RestaurantCollections
               @meal_route = "#{@api_root}/restaurants/#{restaurant_id}/meals"
               # GET api/v1/restaurants/[restaurant_id]/meals/[meal_id]
               routing.get String do |meal_id|
-                meal = meal.where(restaurants_id: restaurant_id, id: meal_id).first
+                meal = Meal.where(restaurants_id: restaurant_id, id: meal_id).first
                 meal ? meal.to_json : raise('meal not found')
               rescue StandardError => e
                 routing.halt 404, { message: e.message }.to_json
@@ -77,26 +76,26 @@ module RestaurantCollections
                 routing.halt 404, message: 'Could not find meals'
               end
 
-              # POST api/v1/restaurants/[ID]/meals
+              # POST api/v1/restaurants/[restaurant_id]/meals
               routing.post do
                 new_data = JSON.parse(routing.body.read)
                 restaurant = Restaurant.first(id: restaurant_id)
-                new_meal = restaurant.add_mealument(new_data)
+                new_meal = restaurant.add_meal(new_data)
 
-                if new_meal
-                  response.status = 201
-                  response['Location'] = "#{@meal_route}/#{new_meal.id}"
-                  { message: 'mealument saved', data: new_meal }.to_json
-                else
-                  routing.halt 400, 'Could not save mealument'
-                end
+                raise 'Could not save meal' unless new_meal
 
-              rescue StandardError
-                routing.halt 500, { message: 'Database error' }.to_json
+                response.status = 201
+                response['Location'] = "#{@meal_route}/#{new_meal.id}"
+                { message: 'meal saved', data: new_meal }.to_json
+              rescue Sequel::MassAssignmentRestriction
+                Api.logger.warn "MASS-ASSIGNMENT: #{new_data.keys}"
+                routing.halt 400, { message: 'Illegal Attributes' }.to_json
+              rescue StandardError => e
+                routing.halt 500, { message: e.message }.to_json
               end
             end
 
-            # GET api/v1/restaurants/[ID]
+            # GET api/v1/restaurants/[restaurant_id]
             routing.get do
               restaurant = Restaurant.first(id: restaurant_id)
               restaurant ? restaurant.to_json : raise('Restaurant not found')
@@ -122,8 +121,12 @@ module RestaurantCollections
             response.status = 201
             response['Location'] = "#{@restaurant_route}/#{new_restaurant.id}"
             { message: 'Restaurant saved', data: new_restaurant }.to_json
+          rescue Sequel::MassAssignmentRestriction
+            Api.logger.warn "MASS-ASSIGNMENT: #{new_data.keys}"
+            routing.halt 400, { message: 'Illegal Attributes' }.to_json
           rescue StandardError => e
-            routing.halt 400, { message: e.message }.to_json
+            Api.logger.error "UNKOWN ERROR: #{e.message}"
+            routing.halt 500, { message: "Unknown server error" }.to_json
           end
         end
       end
