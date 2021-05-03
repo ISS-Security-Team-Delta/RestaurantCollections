@@ -11,6 +11,8 @@ module RestaurantCollections
   class Meal < Sequel::Model
     many_to_one :restaurant
     plugin :timestamps
+    plugin :whitelist_security
+    set_allowed_columns :categories, :name, :name_eng, :cost, :description
 
     def to_json(options = {})
       JSON(

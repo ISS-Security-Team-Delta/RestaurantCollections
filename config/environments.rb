@@ -4,6 +4,7 @@ require 'roda'
 require 'figaro'
 require 'sequel'
 require './app/lib/secure_db'
+require 'logger'
 
 module RestaurantCollections
   # Configuration for the API
@@ -17,17 +18,11 @@ module RestaurantCollections
     Figaro.load
 
     # Make the enviroment variables accessible to other classes
-    def self.config
-      Figaro.env
-    end
+    def self.config() = Figaro.env
 
-    # Connect to the right DB
-    DB = Sequel.connect(config.DATABASE_URL)
-
-    # Make the database accessible to other classes
-    def self.DB
-      DB
-    end
+    # Database Setup
+    DB = Sequel.connect(ENV.delete('DATABASE_URL'))
+    def self.DB() = DB # rubocop:disable Naming/MethodName
 
     # Development console (like irb) for dev and test ENV
     configure :development, :test do

@@ -12,6 +12,8 @@ module RestaurantCollections
     many_to_one :restaurant
     plugin :uuid, field: :id
     plugin :timestamps
+    plugin :whitelist_security
+    set_allowed_columns :contents, :likes
 
     # encrypt content
     def content_secure
