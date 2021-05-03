@@ -4,39 +4,43 @@ require 'rake/testtask'
 
 task :default => :spec
 
-# Create custom tasks
-desc 'Test API specs only'
+desc 'Tests API specs only'
 task :api_spec do
   sh 'ruby spec/api_spec.rb'
 end
 
-# Use predefined tasks
 desc 'Test all the specs'
 Rake::TestTask.new(:spec) do |t|
   t.pattern = 'spec/*_spec.rb'
   t.warning = false
 end
 
-# Define task dependencies
 desc 'Runs rubocop on tested code'
 task :style => [:spec, :audit] do
   sh 'rubocop .'
 end
 
-# Print ENV
-task :print_env do
-    puts "Environment: #{ENV['RACK_ENV'] || 'development'}"
+desc 'Update vulnerabilities lit and audit gems'
+task :audit do
+  sh 'bundle audit check --update'
 end
 
-# Run application console (pry)
+desc 'Checks for release'
+task :release? => [:spec, :style, :audit] do
+  puts "\nReady for release!"
+end
+
+task :print_env do
+  puts "Environment: #{ENV['RACK_ENV'] || 'development'}"
+end
+
 desc 'Run application console (pry)'
 task :console => :print_env do
   sh 'pry -r ./spec/test_load_all'
 end
 
-# For Migrations
 namespace :db do
-  require_relative 'config/environments'
+  require_relative 'config/environments' # load config info
   require 'sequel'
 
   Sequel.extension :migration
@@ -50,9 +54,8 @@ namespace :db do
 
   desc 'Delete database'
   task :delete do
-    app.DB[:restaurants].delete
-    app.DB[:meals].delete
-    app.DB[:comments].delete
+    app.DB[:documents].delete
+    app.DB[:projects].delete
   end
 
   desc 'Delete dev or test database file'
@@ -62,8 +65,11 @@ namespace :db do
       return
     end
 
-    db_filename = "app/db/store/#{RestaurantCollections::Api.enviroment}.db"
+    db_filename = "app/db/store/#{RestaurantCollections::Api.environment}.db"
     FileUtils.rm(db_filename)
     puts "Deleted #{db_filename}"
   end
+
+  desc 'Delete and migrate again'
+  task reset: [:drop, :migrate]
 end
