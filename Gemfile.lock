@@ -76,7 +76,6 @@ DEPENDENCIES
   minitest-rg
   pry
   puma (~> 5)
-  rack (>= 2.0.6)
   rack-test
   rake
   rbnacl (~> 7)

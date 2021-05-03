@@ -21,6 +21,44 @@ module RestaurantCollections
           @restaurant_route = "#{@api_root}/restaurants"
 
           routing.on String do |restaurant_id|
+
+            routing.on 'comments' do
+              @comment_route = "#{@api_root}/restaurants/#{restaurant_id}/comments"
+              # GET api/v1/restaurants/[restaurant_id]/comments/[comment_id]
+              routing.get String do |comment_id|
+                comment = comment.where(restaurants_id: restaurant_id, id: comment_id).first
+                comment ? comment.to_json : raise('comment not found')
+              rescue StandardError => e
+                routing.halt 404, { message: e.message }.to_json
+              end
+
+              # GET api/v1/restaurants/[restaurant_id]/comments
+              routing.get do
+                output = { data: Restaurant.first(id: restaurant_id).comments }
+                JSON.pretty_generate(output)
+              rescue StandardError
+                routing.halt 404, message: 'Could not find comments'
+              end
+
+              # POST api/v1/restaurants/[ID]/comments
+              routing.post do
+                new_data = JSON.parse(routing.body.read)
+                restaurant = Restaurant.first(id: restaurant_id)
+                new_comment = restaurant.add_mealument(new_data)
+
+                if new_comment
+                  response.status = 201
+                  response['Location'] = "#{@comment_route}/#{new_comment.id}"
+                  { message: 'comment saved', data: new_comment }.to_json
+                else
+                  routing.halt 400, 'Could not save mealument'
+                end
+
+              rescue StandardError
+                routing.halt 500, { message: 'Database error' }.to_json
+              end
+            end
+
             routing.on 'meals' do
               @meal_route = "#{@api_root}/restaurants/#{restaurant_id}/meals"
               # GET api/v1/restaurants/[restaurant_id]/meals/[meal_id]
