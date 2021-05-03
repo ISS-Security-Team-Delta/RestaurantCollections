@@ -5,10 +5,10 @@ require 'sequel'
 Sequel.migration do
   change do
     create_table(:comments) do
-      primary_key :id
+      uuid :id, primary_key: true
       foreign_key :restaurant_id, table: :restaurants
 
-      String :contents
+      String :contents_secure
       String :likes, null: false
 
       DataTime :created_at

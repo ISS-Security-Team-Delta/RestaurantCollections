@@ -3,8 +3,8 @@
 require 'roda'
 require 'figaro'
 require 'sequel'
+require './app/lib/secure_db'
 require 'logger'
-# require './app/lib/secure_db'
 
 module RestaurantCollections
   # Configuration for the API
