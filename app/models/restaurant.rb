@@ -13,7 +13,9 @@ module RestaurantCollections
     one_to_many :comments
     plugin :association_dependencies, meals: :destroy, comments: :destroy
     plugin :timestamps
-    
+    plugin :whitelist_security
+    set_allowed_columns :website, :name, :address, :menu
+
     # def initialize(new_restaurant)
     #   @id      = new_restaurant['id'] || new_id
     #   @website = new_restaurant['website']
