@@ -1,5 +1,5 @@
 
-require_relative './spec_helper'
+require_relative '../spec_helper'
 
 describe 'Test RestaurantCollections Web API' do
   describe 'Root route' do
