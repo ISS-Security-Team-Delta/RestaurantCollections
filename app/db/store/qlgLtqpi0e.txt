@@ -1,0 +1,1 @@
+{"type":"restaurant","id":"qlgLtqpi0e","website":"something.com","name":"hehe","address":"somewhere","menu":"food"}

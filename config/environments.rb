@@ -20,6 +20,10 @@ module RestaurantCollections
     # Make the enviroment variables accessible to other classes
     def self.config() = Figaro.env
 
+    # Logger setup
+    LOGGER = Logger.new($stderr)
+    def self.logger() = LOGGER
+
     # Database Setup
     DB = Sequel.connect(ENV.delete('DATABASE_URL'))
     def self.DB() = DB # rubocop:disable Naming/MethodName
@@ -27,6 +31,7 @@ module RestaurantCollections
     # Development console (like irb) for dev and test ENV
     configure :development, :test do
       require 'pry'
+      logger.level = Logger::ERROR
     end
   end
 end
