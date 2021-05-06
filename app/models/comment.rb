@@ -13,32 +13,32 @@ module RestaurantCollections
     plugin :uuid, field: :id
     plugin :timestamps
     plugin :whitelist_security
-    set_allowed_columns :contents, :likes
+    set_allowed_columns :content, :likes
 
     # encrypt content
-    def content_secure
+    def content
       SecureDB.decrypt(content_secure)
     end
 
     def content=(plaintext)
+      puts plaintext
       self.content_secure = SecureDB.encrypt(plaintext)
     end
 
     def to_json(options = {})
       JSON(
         {
-            data: {
-              type: 'comment',
-              attributes: {
-                id: id,
-                contents: contents,
-                likes: likes
-              }
-            },
-            included: {
-              restaurant: restaurant
+          data: {
+            type: 'comment',
+            attributes: {
+              content: content,
+              likes: likes
             }
-          }, options
+          },
+          included: {
+            restaurant: restaurant
+          }
+        }, options
       )
     end
   end
