@@ -17,5 +17,5 @@ end
 
 DATA = {}
 DATA[:restaurants] = YAML.safe_load File.read('app/db/seeds/restaurant_seeds.yml')
-DATA[:comments] = YAML.safe_load File.read('app/db/seeds/restaurant_seeds.yml')
-DATA[:meals] = YAML.safe_load File.read('app/db/seeds/restaurant_seeds.yml')
+DATA[:comments] = YAML.safe_load File.read('app/db/seeds/comment_seeds.yml')
+DATA[:meals] = YAML.safe_load File.read('app/db/seeds/meal_seeds.yml')
