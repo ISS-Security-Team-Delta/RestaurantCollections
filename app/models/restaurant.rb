@@ -9,9 +9,19 @@ module RestaurantCollections
 
   # Restaurants' info
   class Restaurant < Sequel::Model
+    many_to_one :owner, class: :'RestaurantCollections::Restaurant'
+    many_to_many :collaborators,
+                 class: :'RestaurantCollections::Restaurant',
+                 join_table: :accounts_projects,
+                 left_key: :restaurant_id, right_key: :collaborator_id
+
     one_to_many :meals
     one_to_many :comments
-    plugin :association_dependencies, meals: :destroy, comments: :destroy
+    plugin :association_dependencies,
+            meals: :destroy,
+            comments: :destroy,
+            collaborators: :nullify
+
     plugin :timestamps
     plugin :whitelist_security
     set_allowed_columns :website, :name, :address, :menu

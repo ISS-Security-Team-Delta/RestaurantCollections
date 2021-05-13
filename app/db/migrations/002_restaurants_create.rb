@@ -6,12 +6,13 @@ Sequel.migration do
   change do
     create_table(:restaurants) do
       primary_key :id
+      foreign_key :owner_id, :accounts
 
       String :name, unique: true, null: false
       String :website, unique: true
       String :address, unique: true
       String :menu
-      
+
       DataTime :created_at
       DataTime :updated_at
     end
