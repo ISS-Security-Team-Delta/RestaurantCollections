@@ -42,8 +42,11 @@ module RestaurantCollections
               # POST api/v1/restaurants/[restaurant_id]/comments
               routing.post do
                 new_data = JSON.parse(routing.body.read)
-                restaurant = Restaurant.first(id: restaurant_id)
-                new_comment = restaurant.add_comment(new_data)
+
+                new_comment = RestaurantCollections::CreateCommentForRestaurant.call(
+                  restaurant_id: restaurant_id,
+                  comment_data: new_data
+                )
                 raise 'Could not save comment' unless new_comment
 
                 response.status = 201
@@ -79,8 +82,10 @@ module RestaurantCollections
               # POST api/v1/restaurants/[restaurant_id]/meals
               routing.post do
                 new_data = JSON.parse(routing.body.read)
-                restaurant = Restaurant.first(id: restaurant_id)
-                new_meal = restaurant.add_meal(new_data)
+                new_meal = RestaurantCollections::CreateMealForRestaurant.call(
+                  restaurant_id: restaurant_id,
+                  meal_data: new_data
+                )
 
                 raise 'Could not save meal' unless new_meal
 
@@ -126,7 +131,7 @@ module RestaurantCollections
             routing.halt 400, { message: 'Illegal Attributes' }.to_json
           rescue StandardError => e
             Api.logger.error "UNKOWN ERROR: #{e.message}"
-            routing.halt 500, { message: "Unknown server error" }.to_json
+            routing.halt 500, { message: 'Unknown server error' }.to_json
           end
         end
       end
