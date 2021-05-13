@@ -5,7 +5,7 @@ require 'sequel'
 Sequel.migration do
   change do
     create_table(:meals) do
-      primary_key :id
+      uuid :id, primary_key: true
       foreign_key :restaurant_id, table: :restaurants
 
       String :categories
@@ -17,7 +17,7 @@ Sequel.migration do
       DataTime :created_at
       DataTime :updated_at
 
-      unique %i[restaurant_id categories name name_eng]
+      unique [:restaurant_id, :categories, :name, :name_eng]
     end
   end
 end

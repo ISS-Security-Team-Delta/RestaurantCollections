@@ -14,7 +14,7 @@ Sequel.migration do
       DataTime :created_at
       DataTime :updated_at
 
-      unique %i[restaurant_id likes]
+      unique [:restaurant_id]
     end
   end
 end
