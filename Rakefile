@@ -7,7 +7,7 @@ task :default => :spec
 
 desc 'Tests API specs only'
 task :api_spec do
-  sh 'ruby spec/api_spec.rb'
+  sh 'ruby spec/integration/api_spec.rb'
 end
 
 desc 'Test all the specs'
@@ -64,8 +64,8 @@ namespace :db do
 
   desc 'Delete database'
   task :delete do
-    app.DB[:documents].delete
-    app.DB[:projects].delete
+    app.DB[:restaurants].delete
+    app.DB[:comments].delete
   end
 
   desc 'Delete dev or test database file'
