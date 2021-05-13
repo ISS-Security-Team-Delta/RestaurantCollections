@@ -11,13 +11,12 @@ module RestaurantCollections
   class Api < Roda
     plugin :environments
 
+    # Environment variables setup
     Figaro.application = Figaro::Application.new(
       environment: environment,
       path: File.expand_path('config/secrets.yml')
     )
     Figaro.load
-
-    # Make the enviroment variables accessible to other classes
     def self.config() = Figaro.env
 
     # Logger setup
