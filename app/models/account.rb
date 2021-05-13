@@ -20,7 +20,7 @@ module RestaurantCollections
 
     plugin :timestamps, update_on_create: true
 
-    def projects
+    def restaurants
       owned_restaurants + collaborations
     end
 
