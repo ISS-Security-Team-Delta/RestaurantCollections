@@ -50,24 +50,24 @@ describe 'Test Project Handling' do
       end
     end
 
-    describe 'Creating New Projects' do
-      before do
-        @req_header = { 'CONTENT_TYPE' => 'application/json' }
-        @restaurant_data = DATA[:restaurants][1]
-      end
+  describe 'Creating New Restaurants' do
+    before do
+      @req_header = { 'CONTENT_TYPE' => 'application/json' }
+      @restaurant_data = DATA[:restaurants][1]
+    end
 
-      it 'HAPPY: should be able to create new restaurants' do
-        post 'api/v1/restaurants', @restaurant_data.to_json, @req_header
-        _(last_response.status).must_equal 201
-        _(last_response.header['Location'].size).must_be :>, 0
+    it 'HAPPY: should be able to create new restaurants' do
+      post 'api/v1/restaurants', @restaurant_data.to_json, @req_header
+      _(last_response.status).must_equal 201
+      _(last_response.header['Location'].size).must_be :>, 0
 
-        created = JSON.parse(last_response.body)['data']['data']['attributes']
-        restaurant = RestaurantCollections::Restaurant.first
+      created = JSON.parse(last_response.body)['data']['data']['attributes']
+      restaurant = RestaurantCollections::Restaurant.first
 
-        _(created['id']).must_equal restaurant.id
-        _(created['name']).must_equal @restaurant_data['name']
-        _(created['website']).must_equal @restaurant_data['website']
-      end
+      _(created['id']).must_equal restaurant.id
+      _(created['name']).must_equal @restaurant_data['name']
+      _(created['website']).must_equal @restaurant_data['website']
+    end
 
 #      it 'SECURITY: should not create restaurant with mass assignment' do
 #        bad_data = @restaurant_data.clone
