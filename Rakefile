@@ -16,6 +16,11 @@ Rake::TestTask.new(:spec) do |t|
   t.warning = false
 end
 
+desc 'Rerun tests on live code changes'
+task :respec do
+  sh 'rerun -c rake spec'
+end
+
 desc 'Runs rubocop on tested code'
 task :style => [:spec, :audit] do
   sh 'rubocop .'
@@ -40,17 +45,8 @@ task :console => :print_env do
   sh 'pry -r ./spec/test_load_all'
 end
 
-namespace :newkey do
-  desc 'Create sample cryptographic key for database'
-  task :db do
-    require_app('lib')
-    puts "DB_KEY: #{SecureDB.generate_key}"
-  end
-end
-
-
 namespace :db do
-  require_relative 'config/environments' # load config info
+  require_app(nil) # loads config code files only
   require 'sequel'
 
   Sequel.extension :migration
@@ -64,8 +60,7 @@ namespace :db do
 
   desc 'Delete database'
   task :delete do
-    app.DB[:documents].delete
-    app.DB[:projects].delete
+    RestaurantCollections::Account.dataset.destroy
   end
 
   desc 'Delete dev or test database file'
@@ -80,6 +75,38 @@ namespace :db do
     puts "Deleted #{db_filename}"
   end
 
-  desc 'Delete and migrate again'
-  task reset: [:drop, :migrate]
+  task :load_models do
+    require_app(%w[lib models services])
+  end
+
+  task :reset_seeds => [:load_models] do
+    app.DB[:schema_seeds].delete if app.DB.tables.include?(:schema_seeds)
+    RestaurantCollections::Account.dataset.destroy
+  end
+
+  desc 'Seeds the development database'
+  task :seed => [:load_models] do
+    require 'sequel/extensions/seed'
+    Sequel::Seed.setup(:development)
+    Sequel.extension :seed
+    Sequel::Seeder.apply(app.DB, 'app/db/seeds')
+  end
+
+  desc 'Delete all data and reseed'
+  task reseed: [:reset_seeds, :seed]
+end
+
+namespace :newkey do
+  desc 'Create sample cryptographic key for database'
+  task :db do
+    require_app('lib')
+    puts "DB_KEY: #{SecureDB.generate_key}"
+  end
+end
+
+namespace :run do
+  # Run in development mode
+  task :dev do
+    sh 'rackup -p 3000'
+  end
 end

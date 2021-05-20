@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 require 'json'
-require 'base64'
-require 'rbnacl'
 require 'sequel'
 
 module RestaurantCollections
@@ -12,17 +10,18 @@ module RestaurantCollections
 
     plugin :uuid, field: :id
     plugin :timestamps, update_on_create: true
+
     plugin :whitelist_security
-    set_allowed_columns :contents, :likes
+    set_allowed_columns :content, :like
 
     # encrypt content
-    def contents
-      SecureDB.decrypt(contents_secure)
+    def content
+      SecureDB.decrypt(content_secure)
     end
 
-    def contents=(plaintext)
+    def content=(plaintext)
       puts plaintext
-      self.contents_secure = SecureDB.encrypt(plaintext)
+      self.content_secure = SecureDB.encrypt(plaintext)
     end
 
     def to_json(options = {})
@@ -32,8 +31,8 @@ module RestaurantCollections
             type: 'comment',
             attributes: {
               id: id,
-              contents: contents,
-              likes: likes
+              content: content,
+              like: like
             }
           },
           included: {

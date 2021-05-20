@@ -8,13 +8,13 @@ Sequel.migration do
       uuid :id, primary_key: true
       foreign_key :restaurant_id, table: :restaurants
 
-      String :content_secure
+      String :contents_secure
       String :likes, null: false
 
       DataTime :created_at
       DataTime :updated_at
 
-      unique %i[restaurant_id likes]
+      unique [:restaurant_id]
     end
   end
 end

@@ -24,6 +24,9 @@ describe 'Test Comment Handling' do
 
     result = JSON.parse last_response.body
     _(result['data'].count).must_equal 2
+    result.each do |com|
+      _(com['type']).must_equal 'comment'
+    end
   end
 
   it 'HAPPY: should be able to get details of a single comment' do
@@ -35,8 +38,8 @@ describe 'Test Comment Handling' do
     _(last_response.status).must_equal 200
 
     result = JSON.parse last_response.body
-    _(result['data']['attributes']['id']).must_equal com.id
-    _(result['data']['attributes']['contents']).must_equal com_data['contents']
+    _(result['data']['id']).must_equal com.id
+    _(result['data']['content']).must_equal com_data['content']
   end
 
   it 'SAD: should return error if unknown comment requested' do
@@ -63,8 +66,8 @@ describe 'Test Comment Handling' do
       com = RestaurantCollections::Restaurant.first
 
       _(created['id']).must_equal com.id
-      _(created['contents']).must_equal @com_data['contents']
-      _(created['likes']).must_equal @com_data['likes']
+      _(created['content']).must_equal @com_data['content']
+      _(created['like']).must_equal @com_data['like']
     end
 
     it 'SECURITY: should not create comments with mass assignment' do

@@ -9,13 +9,13 @@ require 'yaml'
 require_relative './test_load_all'
 
 def wipe_database
+  app.DB[:accounts].delete
   app.DB[:restaurants].delete
   app.DB[:comments].delete
-  app.DB[:meals].delete
-
 end
 
-DATA = {}
-DATA[:restaurants] = YAML.safe_load File.read('app/db/seeds/restaurant_seeds.yml')
-DATA[:comments] = YAML.safe_load File.read('app/db/seeds/comment_seeds.yml')
-DATA[:meals] = YAML.safe_load File.read('app/db/seeds/meal_seeds.yml')
+DATA = {
+  accounts: YAML.load(File.read('app/db/seeds/accounts_seeds.yml')),
+  restaurants: YAML.load(File.read('app/db/seeds/restaurants_seeds.yml')),
+  comments: YAML.load(File.read('app/db/seeds/comments_seeds.yml'))
+}.freeze

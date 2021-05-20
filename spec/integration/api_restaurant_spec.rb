@@ -11,8 +11,8 @@ describe 'Test Project Handling' do
 
     describe 'Getting projects' do
       it 'HAPPY: should be able to get list of all restaurants' do
-        RestaurantCollections::Restaurant.create(DATA[:restaurants][0]).save
-        RestaurantCollections::Restaurant.create(DATA[:restaurants][1]).save
+        RestaurantCollections::Restaurant.create(DATA[:restaurants][0])
+        RestaurantCollections::Restaurant.create(DATA[:restaurants][1])
 
         get 'api/v1/restaurants'
         _(last_response.status).must_equal 200
@@ -23,15 +23,15 @@ describe 'Test Project Handling' do
 
       it 'HAPPY: should be able to get details of a single restaurant' do
         existing_store = DATA[:restaurants][1]
-        RestaurantCollections::Restaurant.create(existing_store).save
+        RestaurantCollections::Restaurant.create(existing_store)
         id = RestaurantCollections::Restaurant.first.id
 
         get "/api/v1/restaurants/#{id}"
         _(last_response.status).must_equal 200
 
         result = JSON.parse last_response.body
-        _(result['data']['attributes']['id']).must_equal id
-        _(result['data']['attributes']['name']).must_equal existing_store['name']
+        _(result['data']['id']).must_equal id
+        _(result['data']['name']).must_equal existing_store['name']
       end
 
       it 'SAD: should return error if unknown project requested' do
@@ -61,7 +61,7 @@ describe 'Test Project Handling' do
       _(last_response.status).must_equal 201
       _(last_response.header['Location'].size).must_be :>, 0
 
-      created = JSON.parse(last_response.body)['data']['data']['attributes']
+      created = JSON.parse(last_response.body)['data']['attributes']
       restaurant = RestaurantCollections::Restaurant.first
 
       _(created['id']).must_equal restaurant.id
@@ -69,13 +69,13 @@ describe 'Test Project Handling' do
       _(created['website']).must_equal @restaurant_data['website']
     end
 
-#      it 'SECURITY: should not create restaurant with mass assignment' do
-#        bad_data = @restaurant_data.clone
-#        bad_data['created_at'] = '1900-01-01'
-#        post 'api/v1/restaurants', bad_data.to_json, @req_header
-#
-#        _(last_response.status).must_equal 400
-#        _(last_response.header['Location']).must_be_nil
-#      end
+     it 'SECURITY: should not create restaurant with mass assignment' do
+        bad_data = @restaurant_data.clone
+        bad_data['created_at'] = '1900-01-01'
+        post 'api/v1/restaurants', bad_data.to_json, @req_header
+
+        _(last_response.status).must_equal 400
+        _(last_response.header['Location']).must_be_nil
+      end
     end
 end

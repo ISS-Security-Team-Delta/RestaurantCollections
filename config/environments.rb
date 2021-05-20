@@ -2,9 +2,9 @@
 
 require 'roda'
 require 'figaro'
+require 'logger'
 require 'sequel'
 require './app/lib/secure_db'
-require 'logger'
 
 module RestaurantCollections
   # Configuration for the API
@@ -27,7 +27,6 @@ module RestaurantCollections
     DB = Sequel.connect(ENV.delete('DATABASE_URL'))
     def self.DB() = DB # rubocop:disable Naming/MethodName
 
-    # Development console (like irb) for dev and test ENV
     configure :development, :test do
       require 'pry'
       logger.level = Logger::ERROR
