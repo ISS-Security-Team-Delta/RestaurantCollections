@@ -11,7 +11,9 @@ module RestaurantCollections
   class Restaurant < Sequel::Model
     one_to_many :meals
     one_to_many :comments
-    plugin :association_dependencies, meals: :destroy, comments: :destroy
+    plugin :association_dependencies, meals: :destroy
+    plugin :association_dependencies, comments: :destroy
+
     plugin :timestamps
     plugin :whitelist_security
     set_allowed_columns :website, :name, :address, :menu

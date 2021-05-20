@@ -36,7 +36,7 @@ describe 'Test Comment Handling' do
 
     result = JSON.parse last_response.body
     _(result['data']['attributes']['id']).must_equal com.id
-    _(result['data']['attributes']['name']).must_equal com_data['name']
+    _(result['data']['attributes']['contents']).must_equal com_data['contents']
   end
 
   it 'SAD: should return error if unknown comment requested' do
@@ -49,7 +49,7 @@ describe 'Test Comment Handling' do
   describe 'Creating Comments' do
     before do
       @rest = RestaurantCollections::Restaurant.first
-      @com_data = DATA[:documents][1]
+      @com_data = DATA[:comments][1]
       @req_header = { 'CONTENT_TYPE' => 'application/json' }
     end
 

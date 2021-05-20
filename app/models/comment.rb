@@ -6,23 +6,23 @@ require 'rbnacl'
 require 'sequel'
 
 module RestaurantCollections
-
   # Comment info
   class Comment < Sequel::Model
     many_to_one :restaurant
+
     plugin :uuid, field: :id
-    plugin :timestamps
+    plugin :timestamps, update_on_create: true
     plugin :whitelist_security
-    set_allowed_columns :content, :likes
+    set_allowed_columns :contents, :likes
 
     # encrypt content
-    def content
-      SecureDB.decrypt(content_secure)
+    def contents
+      SecureDB.decrypt(contents_secure)
     end
 
-    def content=(plaintext)
+    def contents=(plaintext)
       puts plaintext
-      self.content_secure = SecureDB.encrypt(plaintext)
+      self.contents_secure = SecureDB.encrypt(plaintext)
     end
 
     def to_json(options = {})
@@ -31,7 +31,8 @@ module RestaurantCollections
           data: {
             type: 'comment',
             attributes: {
-              content: content,
+              id: id,
+              contents: contents,
               likes: likes
             }
           },
