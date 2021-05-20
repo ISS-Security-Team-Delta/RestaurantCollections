@@ -9,7 +9,7 @@ gem 'roda', '~>3'
 
 # Configuration
 gem 'figaro', '~>1'
-gem 'rake' '~>13'
+gem 'rake','~>13'
 
 # Security
 gem 'bundler-audit'
@@ -17,7 +17,7 @@ gem 'rbnacl', '~>7'
 
 # Database
 gem 'hirb', '~>0'
-gem 'sequel' '~>5'
+gem 'sequel','~>5'
 group :development, :test do
   gem 'sequel-seed'
   gem 'sqlite3'
