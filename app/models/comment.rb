@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require 'json'
+require 'base64'
+require 'rbnacl'
 require 'sequel'
 
 module RestaurantCollections
@@ -8,7 +10,6 @@ module RestaurantCollections
   # Comment info
   class Comment < Sequel::Model
     many_to_one :restaurant
-
     plugin :uuid, field: :id
     plugin :timestamps
     plugin :whitelist_security
@@ -20,6 +21,7 @@ module RestaurantCollections
     end
 
     def content=(plaintext)
+      puts plaintext
       self.content_secure = SecureDB.encrypt(plaintext)
     end
 
@@ -29,7 +31,6 @@ module RestaurantCollections
           data: {
             type: 'comment',
             attributes: {
-              id: id,
               content: content,
               likes: likes
             }
