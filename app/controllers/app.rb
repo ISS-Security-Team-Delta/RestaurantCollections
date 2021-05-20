@@ -4,7 +4,7 @@ require 'roda'
 require 'json'
 
 module RestaurantCollections
-  # Web controller for Credence API
+  # Web controller for RestaurantCollections API
   class Api < Roda
     plugin :halt
     plugin :multi_route
