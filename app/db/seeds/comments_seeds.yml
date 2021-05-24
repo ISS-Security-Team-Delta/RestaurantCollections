@@ -1,5 +1,5 @@
 ---
-- contents: yummy
-  likes: 5
-- contents: very yummy
-  likes: 10
+- content: yummy
+  like: 5
+- content: very yummy
+  like: 10

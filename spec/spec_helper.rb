@@ -9,9 +9,9 @@ require 'yaml'
 require_relative './test_load_all'
 
 def wipe_database
-  app.DB[:accounts].delete
-  app.DB[:restaurants].delete
   app.DB[:comments].delete
+  app.DB[:restaurants].delete
+  app.DB[:accounts].delete
 end
 
 DATA = {

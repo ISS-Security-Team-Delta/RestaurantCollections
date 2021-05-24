@@ -72,6 +72,7 @@ module RestaurantCollections
         response.status = 201
         response['Location'] = "#{@restaurant_id}/#{new_rest.id}"
         { message: 'Restaurant saved', data: new_rest }.to_json
+        
       rescue Sequel::MassAssignmentRestriction
         routing.halt 400, { message: 'Illegal Request' }.to_json
       rescue StandardError => e
@@ -80,3 +81,5 @@ module RestaurantCollections
     end
   end
 end
+
+#{"data":{"type":"restaurant","attributes":{"id":402,"website":"hehept2.com","name":"hehe2","address":"hehe2 street","menu":"yummy food pt 2"}}}

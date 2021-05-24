@@ -30,8 +30,8 @@ describe 'Test Project Handling' do
         _(last_response.status).must_equal 200
 
         result = JSON.parse last_response.body
-        _(result['data']['id']).must_equal id
-        _(result['data']['name']).must_equal existing_store['name']
+        _(result['data']['attributes']['id']).must_equal id
+        _(result['data']['attributes']['name']).must_equal existing_store['name']
       end
 
       it 'SAD: should return error if unknown project requested' do
@@ -61,7 +61,7 @@ describe 'Test Project Handling' do
       _(last_response.status).must_equal 201
       _(last_response.header['Location'].size).must_be :>, 0
 
-      created = JSON.parse(last_response.body)['data']['attributes']
+      created = JSON.parse(last_response.body)['data']['data']['attributes']
       restaurant = RestaurantCollections::Restaurant.first
 
       _(created['id']).must_equal restaurant.id

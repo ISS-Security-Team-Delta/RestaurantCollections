@@ -20,7 +20,6 @@ module RestaurantCollections
     end
 
     def content=(plaintext)
-      puts plaintext
       self.content_secure = SecureDB.encrypt(plaintext)
     end
 
