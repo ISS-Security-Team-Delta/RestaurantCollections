@@ -4,15 +4,15 @@ require 'json'
 require 'sequel'
 
 module RestaurantCollections
-
   # Comment info
   class Comment < Sequel::Model
     many_to_one :restaurant
 
     plugin :uuid, field: :id
-    plugin :timestamps
+    plugin :timestamps, update_on_create: true
+
     plugin :whitelist_security
-    set_allowed_columns :content, :likes
+    set_allowed_columns :content, :like
 
     # encrypt content
     def content
@@ -31,7 +31,7 @@ module RestaurantCollections
             attributes: {
               id: id,
               content: content,
-              likes: likes
+              like: like
             }
           },
           included: {

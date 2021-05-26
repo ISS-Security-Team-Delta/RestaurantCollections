@@ -11,32 +11,37 @@ describe 'Test Comment Handling' do
     DATA[:restaurants].each do |rest_data|
       RestaurantCollections::Restaurant.create(rest_data)
     end
+    @rest = RestaurantCollections::Restaurant.first
+    @com_data = DATA[:comments][1]
+    @req_header = { 'CONTENT_TYPE' => 'application/json' }
   end
 
   it 'HAPPY: should be able to get list of all comments' do
-    rest = RestaurantCollections::Restaurant.first
     DATA[:comments].each do |com|
-      rest.add_comment(com)
+      post "api/v1/restaurants/#{@rest.id}/comments", com.to_json, @req_header
     end
 
-    get "api/v1/restaurants/#{rest.id}/comments"
+    get "api/v1/restaurants/#{@rest.id}/comments"
     _(last_response.status).must_equal 200
 
     result = JSON.parse last_response.body
     _(result['data'].count).must_equal 2
+    result['data'].each do |com|
+      _(com['data']['type']).must_equal 'comment'
+    end
   end
 
   it 'HAPPY: should be able to get details of a single comment' do
-    com_data = DATA[:comments][1]
-    rest = RestaurantCollections::Restaurant.first
-    com = rest.add_comment(com_data)
+    post "api/v1/restaurants/#{@rest.id}/comments", @com_data.to_json, @req_header
 
-    get "/api/v1/restaurants/#{rest.id}/comments/#{com.id}"
+    created_com = JSON.parse(last_response.body)['data']['data']['attributes']
+
+    get last_response.header['Location']
     _(last_response.status).must_equal 200
 
     result = JSON.parse last_response.body
-    _(result['data']['attributes']['id']).must_equal com.id
-    _(result['data']['attributes']['name']).must_equal com_data['name']
+    _(result['data']['attributes']['id']).must_equal created_com['id']
+    _(result['data']['attributes']['content']).must_equal created_com['content']
   end
 
   it 'SAD: should return error if unknown comment requested' do
@@ -49,7 +54,7 @@ describe 'Test Comment Handling' do
   describe 'Creating Comments' do
     before do
       @rest = RestaurantCollections::Restaurant.first
-      @com_data = DATA[:documents][1]
+      @com_data = DATA[:comments][1]
       @req_header = { 'CONTENT_TYPE' => 'application/json' }
     end
 
@@ -61,10 +66,9 @@ describe 'Test Comment Handling' do
 
       created = JSON.parse(last_response.body)['data']['data']['attributes']
       com = RestaurantCollections::Restaurant.first
-
-      _(created['id']).must_equal com.id
-      _(created['contents']).must_equal @com_data['contents']
-      _(created['likes']).must_equal @com_data['likes']
+      
+      _(created['content']).must_equal @com_data['content']
+      _(created['like']).must_equal @com_data['like']
     end
 
     it 'SECURITY: should not create comments with mass assignment' do

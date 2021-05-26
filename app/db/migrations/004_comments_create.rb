@@ -9,12 +9,10 @@ Sequel.migration do
       foreign_key :restaurant_id, table: :restaurants
 
       String :content_secure
-      String :likes, null: false
+      Integer :like, null: false
 
       DataTime :created_at
       DataTime :updated_at
-
-      unique [:restaurant_id]
     end
   end
 end
