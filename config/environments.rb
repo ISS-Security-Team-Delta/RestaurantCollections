@@ -32,10 +32,5 @@ module RestaurantCollections
       require 'pry'
       logger.level = Logger::ERROR
     end
-
-    # Redirect
-    configure :production do
-      use Rack::SslEnforcer, hsts: true
-    end
   end
 end

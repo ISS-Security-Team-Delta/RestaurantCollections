@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 source 'https://rubygems.org'
+ruby File.read('.ruby-version').strip
 
 # Web API
 gem 'json'
@@ -38,5 +39,7 @@ gem 'pry'
 gem 'rerun'
 gem 'rubocop'
 
-# Auto redirect browsers
-gem 'rack-ssl-enforcer'
+# Production
+group :production do 
+  gem 'pg'
+end
