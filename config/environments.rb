@@ -4,6 +4,7 @@ require 'roda'
 require 'figaro'
 require 'logger'
 require 'sequel'
+require 'rack/ssl-enforcer'
 require './app/lib/secure_db'
 
 module RestaurantCollections
@@ -30,6 +31,11 @@ module RestaurantCollections
     configure :development, :test do
       require 'pry'
       logger.level = Logger::ERROR
+    end
+
+    # Redirect
+    configure :production do
+      use Rack::SslEnforcer, hsts: true
     end
   end
 end

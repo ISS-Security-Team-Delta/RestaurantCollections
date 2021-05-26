@@ -37,3 +37,6 @@ end
 gem 'pry'
 gem 'rerun'
 gem 'rubocop'
+
+# Auto redirect browsers
+gem 'rack-ssl-enforcer'
