@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 source 'https://rubygems.org'
+ruby File.read('.ruby-version').strip
 
 # Web API
 gem 'json'
@@ -37,3 +38,8 @@ end
 gem 'pry'
 gem 'rerun'
 gem 'rubocop'
+
+# Production
+group :production do 
+  gem 'pg'
+end
