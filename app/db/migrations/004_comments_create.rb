@@ -11,8 +11,8 @@ Sequel.migration do
       String :content_secure
       Integer :like, null: false
 
-      DataTime :created_at
-      DataTime :updated_at
+      DateTime :created_at
+      DateTime :updated_at
     end
   end
 end

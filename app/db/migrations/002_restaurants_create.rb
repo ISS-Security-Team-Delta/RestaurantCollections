@@ -13,8 +13,8 @@ Sequel.migration do
       String :address, unique: true
       String :menu
 
-      DataTime :created_at
-      DataTime :updated_at
+      DateTime :created_at
+      DateTime :updated_at
     end
   end
 end
