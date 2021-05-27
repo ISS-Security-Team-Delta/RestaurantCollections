@@ -31,7 +31,8 @@ module RestaurantCollections
       rescue Sequel::MassAssignmentRestriction
         routing.halt 400, { message: 'Illegal Request' }.to_json
       rescue StandardError => e
-        puts error.inspect
+        puts "ERROR CREATING ACCOUNT: #{e.inspect}"
+        puts e.backtrace
         routing.halt 500, { message: e.message }.to_json
       end
     end
