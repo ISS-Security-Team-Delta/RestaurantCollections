@@ -4,7 +4,6 @@ require 'roda'
 require 'figaro'
 require 'logger'
 require 'sequel'
-require 'rack/ssl-enforcer'
 require './app/lib/secure_db'
 
 module RestaurantCollections
