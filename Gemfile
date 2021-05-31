@@ -8,7 +8,7 @@ gem 'json'
 gem 'puma', '~>5'
 gem 'roda', '~>3'
 
-# Configurationw
+# Configuration
 gem 'figaro', '~>1'
 gem 'rake','~>13'
 
@@ -19,27 +19,29 @@ gem 'rbnacl', '~>7'
 # Database
 gem 'hirb', '~>0'
 gem 'sequel','~>5'
-group :development, :test do
-  gem 'sequel-seed'
-  gem 'sqlite3'
-end
 
-# Performance
-gem 'rubocop-performance'
+group :production do
+  gem 'pg'
+end
 
 # Testing
 group :test do
   gem 'minitest'
   gem 'minitest-rg'
-  gem 'rack-test'
 end
 
-# Development
-gem 'pry'
-gem 'rerun'
-gem 'rubocop'
+# Debugging
+gem 'pry' # necessary for rake console
 
-# Production
-group :production do 
-  gem 'pg'
+# Development
+group :development do
+  gem 'rerun'
+  gem 'rubocop'
+  gem 'rubocop-performance'
+end
+
+group :development, :test do
+  gem 'rack-test'
+  gem 'sequel-seed'
+  gem 'sqlite3'
 end
