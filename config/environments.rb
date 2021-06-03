@@ -5,6 +5,7 @@ require 'figaro'
 require 'logger'
 require 'sequel'
 require './app/lib/secure_db'
+require './app/lib/auth_token.rb'
 
 module RestaurantCollections
   # Configuration for the API
@@ -22,11 +23,13 @@ module RestaurantCollections
     # Logger setup
     LOGGER = Logger.new($stderr)
     def self.logger() = LOGGER
+    
+    AuthToken.setup(config.MSG_KEY)
 
     # Database Setup
     DB = Sequel.connect(ENV.delete('DATABASE_URL'))
     def self.DB() = DB # rubocop:disable Naming/MethodName
-
+    SecureDB.setup(ENV.delete('DB_KEY'))
     configure :development, :test do
       require 'pry'
       logger.level = Logger::ERROR

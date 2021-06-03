@@ -1,6 +1,6 @@
 ---
   - username: Tara
-    proj_name:
+    rest_name:
       - hehe
   - username: Juju
     rest_name:
