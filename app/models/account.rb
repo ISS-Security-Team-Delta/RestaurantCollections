@@ -29,9 +29,7 @@ module RestaurantCollections
     end
 
     def password?(try_password)
-      puts "Password digest: #{password_digest}"
       digest = RestaurantCollections::Password.from_digest(password_digest)
-      puts "The output digest to compare is: #{digest}"
       digest.correct?(try_password)
     end
 

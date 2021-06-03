@@ -2,18 +2,28 @@
 
 require 'roda'
 require 'json'
+require_relative './helpers'
 
 module RestaurantCollections
   # Web controller for RestaurantCollections API
   class Api < Roda
+    include SecureRequestHelpers
     plugin :halt
     plugin :multi_route
+    plugin :request_headers
 
     def secure_request?(routing)
       routing.scheme.casecmp(Api.config.SECURE_SCHEME).zero?
     end
 
     route do |routing|
+
+      begin
+        @auth_account = authenticated_account(routing.headers)
+      rescue AuthToken::InvalidTokenError
+        routing.halt 403, { message: 'Invalid auth token' }.to_json
+      end
+
       response['Content-Type'] = 'application/json'
 
       secure_request?(routing) ||

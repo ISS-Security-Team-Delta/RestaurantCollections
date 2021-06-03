@@ -57,10 +57,12 @@ module RestaurantCollections
 
       # GET api/v1/restaurants
       routing.get do
-        output = { data: Restaurant.all }
+        account = Account.first(username: @auth_account['username'])
+        restaurants = account.restaurants
+        output = { data: restaurants }
         JSON.pretty_generate(output)
       rescue StandardError
-        routing.halt 404, { message: 'Could not find restaurants' }.to_json
+        routing.halt 403, { message: 'Could not find projects' }.to_json
       end
 
       # POST api/v1/restaurants

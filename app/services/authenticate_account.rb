@@ -17,11 +17,9 @@ module RestaurantCollections
   class AuthenticateAccount
     def self.call(credentials)
       account = Account.first(username: credentials[:username])
-      puts "Account info: #{credentials[:password]}, #{account.username}"
       unless account.password?(credentials[:password])
         raise(UnauthorizedError, credentials)
       end
-      puts "GOT HERE!!!!"
       account_and_token(account)
     end
     
