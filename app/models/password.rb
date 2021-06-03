@@ -14,7 +14,10 @@ module RestaurantCollections
     end
 
     def correct?(password)
+      puts "The password: #{password}"
+      puts "The salt: #{@salt}"
       new_digest = Password.password_hash(@salt, password)
+      puts "The digest: #{@digest} and new digest: #{new_digest}"
       @digest == new_digest
     end
 
@@ -36,6 +39,7 @@ module RestaurantCollections
       digested = JSON.parse(digest)
       salt = Base64.strict_decode64(digested['salt'])
       hash = Base64.strict_decode64(digested['hash'])
+      puts "The next digest to compare: #{digested}, salt: #{salt}, hash: #{hash}"
       new(salt, hash)
     end
   end
