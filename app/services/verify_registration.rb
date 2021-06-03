@@ -1,6 +1,5 @@
 # frozen_string_literal: true
-
-require 'http'
+require 'sendgrid-ruby'
 
 module RestaurantCollections
   ## Send email verfification email
@@ -9,19 +8,14 @@ module RestaurantCollections
   class VerifyRegistration
     # Error for invalid registration details
     class InvalidRegistration < StandardError; end
+    include SendGrid
 
     def initialize(registration)
       @registration = registration
     end
 
     # rubocop:disable Layout/EmptyLineBetweenDefs
-    def mail_key() = ENV['MAILGUN_API_KEY']
-    def mail_domain() = ENV['MAILGUN_DOMAIN']
-    def mail_credentials() = "api:#{mail_key}"
-    def mail_auth() = Base64.strict_encode64(mail_credentials)
-    def mail_url
-      "https://#{mail_credentials}@api.mailgun.net/v3/#{mail_domain}/messages"
-    end
+    def mail_key() = ENV['SENDGRID_API_KEY']
     # rubocop:enable Layout/EmptyLineBetweenDefs
 
     def call
@@ -41,7 +35,7 @@ module RestaurantCollections
 
     def html_email
       <<~END_EMAIL
-        <H1>Restaurant Collections App Registration Received</H1>
+        <H2>Restaurant Collections App Registration Received</H2>
         <p>Please <a href=\"#{@registration[:verification_url]}\">click here</a>
         to validate your email.
         You will be asked to set a password to activate your account.</p>
@@ -50,27 +44,25 @@ module RestaurantCollections
 
     def text_email
       <<~END_EMAIL
-        Restaurant Collections App Registration Received\n\n
+        Restaurant Collections Registration Received\n\n
         Please use the following url to validate your email:\n
         #{@registration[:verification_url]}\n\n
         You will be asked to set a password to activate your account.
       END_EMAIL
     end
 
-    def mail_form
-      {
-        from: 'noreply@restaurantcollections-app.com',
-        to: @registration[:email],
-        subject: 'Restaurant Collections Registration Verification',
-        text: text_email,
-        html: html_email
-      }
+    def mail_setup
+      from = Email.new(email: 'restaurantcollections@gmail.com')
+      to = Email.new(email: @registration[:email])
+      subject = 'Restaurant Collections Registration Verification'
+      content = Content.new(type: 'text/html', value: html_email)
+      Mail.new(from, subject, to, content)
     end
 
     def send_email_verification
-      HTTP
-        .auth("Basic #{mail_auth}")
-        .post(mail_url, form: mail_form)
+      mail = mail_setup
+      sg = SendGrid::API.new(api_key: mail_key)
+      response = sg.client.mail._('send').post(request_body: mail.to_json)
     rescue StandardError => e
       puts "EMAIL ERROR: #{e.inspect}"
       raise(InvalidRegistration,

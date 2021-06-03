@@ -24,6 +24,9 @@ group :production do
   gem 'pg'
 end
 
+# Sendgrid
+gem 'sendgrid-ruby'
+
 # External Services
 gem 'http'
 
