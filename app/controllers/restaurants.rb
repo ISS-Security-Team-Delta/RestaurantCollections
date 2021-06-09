@@ -68,7 +68,9 @@ module RestaurantCollections
       # POST api/v1/restaurants
       routing.post do
         new_data = JSON.parse(routing.body.read)
+        puts "Data for restaurant in api: #{new_data}"
         new_rest = Restaurant.new(new_data)
+        puts "New restaurant in api: #{new_rest}"
         raise('Could not save Restaurant') unless new_rest.save
 
         response.status = 201

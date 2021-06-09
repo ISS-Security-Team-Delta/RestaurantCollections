@@ -23,9 +23,9 @@ describe 'Test Authentication Routes' do
 
       auth_account = JSON.parse(last_response.body)['attributes']
       _(last_response.status).must_equal 200
-      _(auth_account['username']).must_equal(@account_data['username'])
-      _(auth_account['email']).must_equal(@account_data['email'])
-      _(auth_account['id']).must_be_nil
+      _(auth_account['account']['attributes']['username']).must_equal(@account_data['username'])
+      _(auth_account['account']['attributes']['email']).must_equal(@account_data['email'])
+      _(auth_account['account']['attributes']['id']).must_be_nil
     end
 
     it 'BAD: should not authenticate invalid password' do
