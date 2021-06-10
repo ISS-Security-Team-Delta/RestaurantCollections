@@ -57,10 +57,9 @@ module RestaurantCollections
 
       # GET api/v1/restaurants
       routing.get do
-        account = Account.first(username: @auth_account['username'])
-        restaurants = account.restaurants
-        output = { data: restaurants }
-        JSON.pretty_generate(output)
+        restaurants = RestaurantPolicy::AccountScope.new(@auth_account).viewable
+
+        JSON.pretty_generate(data: restaurants)
       rescue StandardError
         routing.halt 403, { message: 'Could not find projects' }.to_json
       end
