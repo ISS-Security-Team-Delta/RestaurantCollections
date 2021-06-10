@@ -16,7 +16,7 @@ gem 'rake', '~>13'
 gem 'bundler-audit'
 gem 'rbnacl', '~>7'
 
-# Database
+# Databas
 gem 'hirb', '~>0'
 gem 'sequel', '~>5'
 
