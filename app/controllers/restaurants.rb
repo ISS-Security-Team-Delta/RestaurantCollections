@@ -103,7 +103,6 @@ module RestaurantCollections
         routing.post do
           new_data = JSON.parse(routing.body.read)
           puts "Data for restaurant in api: #{new_data}"
-          #binding.pry
           new_rest = @auth_account.add_owned_restaurant(new_data)
           puts "New restaurant in api: #{new_rest}"
           raise('Could not save Restaurant') unless new_rest.save

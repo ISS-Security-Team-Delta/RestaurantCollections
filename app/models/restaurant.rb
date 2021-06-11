@@ -21,21 +21,31 @@ module RestaurantCollections
     plugin :whitelist_security
     set_allowed_columns :website, :name, :address, :menu
 
-    def to_json(options = {})
-      JSON(
-        {
-          data: {
-            type: 'restaurant',
-            attributes: {
-              id: id,
-              website: website,
-              name: name,
-              address: address,
-              menu: menu
-            }
-          }
-        }, options
+    def to_h
+      {
+        type: 'restaurant',
+        attributes: {
+          id: id,
+          website: website,
+          name: name,
+          address: address,
+          menu: menu
+        }
+      }
+    end
+
+    def full_details
+      to_h.merge(
+        relationships: {
+          owner: owner,
+          collaborators: collaborators,
+          documents: documents
+        }
       )
+    end
+
+    def to_json(options = {})
+      JSON(to_h, options)
     end
   end
 end
