@@ -1,72 +1,49 @@
 # frozen_string_literal: true
 
-module Credence
-  # Policy to determine if an account can view a particular project
+module RestaurantCollections
+  # Policy to determine if an account can view a particular restaurant
   class RestaurantPolicy
-    def initialize(account, restaurant)
+    def initialize(account, restaurant, auth_scope = nil)
       @account = account
       @restaurant = restaurant
+      @auth_scope = auth_scope
     end
 
     def can_view?
-      account_is_owner? || account_is_collaborator?
+      can_read? && (account_owns_restaurant? || account_collaborates_on_restaurant?)
     end
-
-    # duplication is ok!
+  
     def can_edit?
-      account_is_owner? || account_is_collaborator?
+      can_write? && (account_owns_restaurant? || account_collaborates_on_restaurant?)
     end
-
+  
     def can_delete?
-      account_is_owner? || account_is_collaborator?
+      can_write? && (account_owns_restaurant? || account_collaborates_on_restaurant?)
     end
-
-    def can_leave?
-      account_is_collaborator?
-    end
-
-    def can_add_comments?
-      account_is_owner? || account_is_collaborator?
-    end
-
-    def can_delete_comments?
-      account_is_owner? || account_is_collaborator?
-    end
-
-    def can_add_collaborators?
-      account_is_owner?
-    end
-
-    def can_remove_collaborators?
-      account_is_owner?
-    end
-
-    def can_collaborate?
-      not (account_is_owner? or account_is_collaborator?)
-    end
-
+  
     def summary
       {
         can_view: can_view?,
         can_edit: can_edit?,
-        can_delete: can_delete?,
-        can_leave: can_leave?,
-        can_add_comments: can_add_comments?,
-        can_delete_comments: can_delete_comments?,
-        can_add_collaborators: can_add_collaborators?,
-        can_remove_collaborators: can_remove_collaborators?,
-        can_collaborate: can_collaborate?
+        can_delete: can_delete?
       }
     end
-
+  
     private
-
-    def account_is_owner?
-      @restaurant.owner == @account
+  
+    def can_read?
+      @auth_scope ? @auth_scope.can_read?('comments') : false
     end
-
-    def account_is_collaborator?
-      @restaurant.collaborators.include?(@account)
+  
+    def can_write?
+      @auth_scope ? @auth_scope.can_write?('comments') : false
     end
-  end
+  
+    def account_owns_restaurant?
+      @comment.restaurant.owner == @account
+    end
+  
+    def account_collaborates_on_restaurant?
+      @comment.restaurant.collaborators.include?(@account)
+    end
 end

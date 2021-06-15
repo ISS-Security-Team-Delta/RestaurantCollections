@@ -3,6 +3,7 @@ require 'base64'
 # Token and Detokenize Authorization Information
 class AuthToken
     extend Securable
+
     ONE_HOUR = 60 * 60
     ONE_DAY = ONE_HOUR * 24
     ONE_WEEK = ONE_DAY * 7
@@ -13,16 +14,22 @@ class AuthToken
     class InvalidTokenError < StandardError; end
 
     # Create a token from a Hash payload
-    def self.create(payload, expiration = ONE_WEEK)
-    contents = { 'payload' => payload, 'exp' => expires(expiration) }
+    def self.create(payload, scope = AuthScope.new, expiration = ONE_WEEK)
+    contents = { 
+      'payload' => payload, 
+      'scope' => scope,
+      'exp' => expires(expiration) 
+    }
     tokenize(contents)
     end
+
     # Extract data from token
     def self.payload(token)
-    contents = detokenize(token)
-    expired?(contents) ? raise(ExpiredTokenError) : contents['payload']
+      contents = detokenize(token)
+      expired?(contents) ? raise(ExpiredTokenError) : contents['payload']
     end
 
+    # Tokenize contents or return nil if no data
     def self.tokenize(message)
         return nil unless message
         message_json = message.to_json

@@ -18,10 +18,10 @@ module RestaurantCollections
       end
   
       # Comment for given requestor account
-      def self.call(requestor:, comment:)
+      def self.call(auth:, comment:)
         raise NotFoundError unless comment
   
-        policy = CommentPolicy.new(requestor, comment)
+        policy = CommentPolicy.new(auth[:account], comment, auth[:scope])
         raise ForbiddenError unless policy.can_view?
   
         comment
