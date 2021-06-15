@@ -9,10 +9,10 @@ module RestaurantCollections
             routing.scheme.casecmp(Api.config.SECURE_SCHEME).zero?
         end
 
-        def authenticated_account(headers)
+        def authorization(headers)
             return nil unless headers['AUTHORIZATION']
 
-            scheme, auth_token = headers['AUTHORIZATION'].split
+            scheme, auth_token = headers['AUTHORIZATION'].split(' ')
             return nil unless scheme.match?(/^Bearer$/i)
 
             scoped_auth(auth_token)

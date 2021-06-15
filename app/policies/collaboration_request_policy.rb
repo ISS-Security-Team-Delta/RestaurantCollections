@@ -3,7 +3,7 @@
 module RestaurantCollections
   # Policy to determine if an account can view a particular restaurant
   class CollaborationRequestPolicy
-    def initialize(restaurant, requestor_account, target_account)
+    def initialize(restaurant, requestor_account, target_account, auth_scope)
       @restaurant = restaurant
       @requestor_account = requestor_account
       @target_account = target_account

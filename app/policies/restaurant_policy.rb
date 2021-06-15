@@ -10,40 +10,72 @@ module RestaurantCollections
     end
 
     def can_view?
-      can_read? && (account_owns_restaurant? || account_collaborates_on_restaurant?)
+      can_read? && (account_is_owner? || account_is_collaborator?)
     end
-  
+
+    # duplication is ok!
     def can_edit?
-      can_write? && (account_owns_restaurant? || account_collaborates_on_restaurant?)
+      can_write? && (account_is_owner? || account_is_collaborator?)
     end
-  
+
     def can_delete?
-      can_write? && (account_owns_restaurant? || account_collaborates_on_restaurant?)
+      can_write? && account_is_owner?
     end
-  
-    def summary
+
+    def can_leave?
+      account_is_collaborator?
+    end
+
+    def can_add_comments?
+      can_write? && (account_is_owner? || account_is_collaborator?)
+    end
+
+    def can_remove_comments?
+      can_write? && (account_is_owner? || account_is_collaborator?)
+    end
+
+    def can_add_collaborators?
+      can_write? && account_is_owner?
+    end
+
+    def can_remove_collaborators?
+      can_write? && account_is_owner?
+    end
+
+    def can_collaborate?
+      !(account_is_owner? || account_is_collaborator?)
+    end
+
+    def summary # rubocop:disable Metrics/MethodLength
       {
         can_view: can_view?,
         can_edit: can_edit?,
-        can_delete: can_delete?
+        can_delete: can_delete?,
+        can_leave: can_leave?,
+        can_add_comments: can_add_comments?,
+        can_delete_comments: can_remove_comments?,
+        can_add_collaborators: can_add_collaborators?,
+        can_remove_collaborators: can_remove_collaborators?,
+        can_collaborate: can_collaborate?
       }
     end
-  
+
     private
-  
+
     def can_read?
-      @auth_scope ? @auth_scope.can_read?('comments') : false
+      @auth_scope ? @auth_scope.can_read?('restaurants') : false
     end
-  
+
     def can_write?
-      @auth_scope ? @auth_scope.can_write?('comments') : false
+      @auth_scope ? @auth_scope.can_write?('restaurants') : false
     end
-  
-    def account_owns_restaurant?
-      @comment.restaurant.owner == @account
+
+    def account_is_owner?
+      @restaurant.owner == @account
     end
-  
-    def account_collaborates_on_restaurant?
-      @comment.restaurant.collaborators.include?(@account)
+
+    def account_is_collaborator?
+      @restaurant.collaborators.include?(@account)
     end
+  end
 end

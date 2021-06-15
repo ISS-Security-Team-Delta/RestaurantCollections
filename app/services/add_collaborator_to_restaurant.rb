@@ -1,15 +1,24 @@
 # frozen_string_literal: true
 
 module RestaurantCollections
-  # Add a collaborator to another owner's existing project
+  # Add a collaborator to another owner's existing restaurant
   class AddCollaboratorToRestaurant
-    def self.call(email:, restaurant_id:)
-      collaborator = Account.first(email: email)
-      restaurant = Restaurant.first(id: restaurant_id)
-      return false if restaurant.owner.id == collaborator.id
+    # Error for owner cannot be collaborator
+    class ForbiddenError < StandardError
+      def message
+        'You are not allowed to invite that person as collaborator'
+      end
+    end
 
-      restaurant.add_collaborator
-      collaborator
+    def self.call(auth:, restaurant:, collab_email:)
+      invitee = Account.first(email: collab_email)
+      policy = CollaborationRequestPolicy.new(
+        restaurant, auth[:account], invitee, auth[:scope]
+      )
+      raise ForbiddenError unless policy.can_invite?
+
+      restaurant.add_collaborator(invitee)
+      invitee
     end
   end
 end

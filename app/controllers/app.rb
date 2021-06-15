@@ -2,7 +2,7 @@
 
 require 'roda'
 require 'json'
-require_relative './helpers'
+require_relative './helpers.rb'
 
 module RestaurantCollections
   # Web controller for RestaurantCollections API
@@ -15,10 +15,6 @@ module RestaurantCollections
 
     UNAUTH_MSG = { message: 'Unathorized Request' }.to_json
 
-    def secure_request?(routing)
-      routing.scheme.casecmp(Api.config.SECURE_SCHEME).zero?
-    end
-
     route do |routing|
       response['Content-Type'] = 'application/json'
 
@@ -26,11 +22,10 @@ module RestaurantCollections
         routing.halt(403, { message: 'TLS/SSL Required' }.to_json)
 
       begin
-        @auth = Authorization(routing.headers)
+        @auth = authorization(routing.headers)
         @auth_account = @auth[:account] if @auth
       rescue AuthToken::InvalidTokenError
         routing.halt 403, { message: 'Invalid auth token' }.to_json
-      end
       rescue AuthToken::ExpiredTokenError
         routing.halt 403, { message: 'Expired auth token' }.to_json
       end

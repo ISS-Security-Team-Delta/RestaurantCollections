@@ -1,5 +1,7 @@
 require_relative 'securable'
+require_relative 'auth_scope'
 require 'base64'
+
 # Token and Detokenize Authorization Information
 class AuthToken
     extend Securable
@@ -15,18 +17,17 @@ class AuthToken
 
     # Create a token from a Hash payload
     def self.create(payload, scope = AuthScope.new, expiration = ONE_WEEK)
-    contents = { 
-      'payload' => payload, 
-      'scope' => scope,
-      'exp' => expires(expiration) 
-    }
-    tokenize(contents)
+      tokenize(
+        'payload' => payload, 
+        'scope' => scope,
+        'exp' => expires(expiration) 
+      )
     end
 
     # Extract data from token
-    def self.payload(token)
+    def self.contents(token)
       contents = detokenize(token)
-      expired?(contents) ? raise(ExpiredTokenError) : contents['payload']
+      expired?(contents) ? raise(ExpiredTokenError) : contents
     end
 
     # Tokenize contents or return nil if no data
@@ -36,21 +37,25 @@ class AuthToken
         ciphertext = base_encrypt(message_json)
         Base64.urlsafe_encode64(ciphertext)
     end
-        # Detokenize and return contents, or raise error
+    
+    # Detokenize and return contents, or raise error
     def self.detokenize(ciphertext64)
         return nil unless ciphertext64
+        
         ciphertext = Base64.urlsafe_decode64(ciphertext64)
         message_json = base_decrypt(ciphertext)
         JSON.parse(message_json)
     rescue StandardError
         raise InvalidTokenError
     end
+
     def self.expires(expiration)
         (Time.now + expiration).to_i
     end
+
     def self.expired?(contents)
         Time.now > Time.at(contents['exp'])
-        rescue StandardError
+    rescue StandardError
         raise InvalidTokenError
     end
 end
