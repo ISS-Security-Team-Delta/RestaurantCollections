@@ -17,10 +17,10 @@ module RestaurantCollections
         end
       end
   
-      def self.call(account:, restaurant:)
+      def self.call(auth:, restaurant:)
         raise NotFoundError unless restaurant
   
-        policy = RestaurantPolicy.new(account, restaurant)
+        policy = RestaurantPolicy.new(auth[:account], restaurant, auth[:scope])
         raise ForbiddenError unless policy.can_view?
   
         restaurant.full_details.merge(policies: policy.summary)

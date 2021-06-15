@@ -39,7 +39,7 @@ module RestaurantCollections
         relationships: {
           owner: owner,
           collaborators: collaborators,
-          documents: documents
+          comments: comments
         }
       )
     end

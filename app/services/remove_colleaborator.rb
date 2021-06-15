@@ -10,12 +10,13 @@ module RestaurantCollections
         end
       end
   
-      def self.call(req_username:, collab_email:, restaurant_id:)
-        account = Account.first(username: req_username)
+      def self.call(auth:, collab_email:, restaurant_id:)
         restaurant = Restaurant.first(id: restaurant_id)
         collaborator = Account.first(email: collab_email)
   
-        policy = CollaborationRequestPolicy.new(restaurant, account, collaborator)
+        policy = CollaborationRequestPolicy.new(
+          restaurant, auth[:account], collaborator, auth[:scope]
+        )
         raise ForbiddenError unless policy.can_remove?
   
         restaurant.remove_collaborator(collaborator)

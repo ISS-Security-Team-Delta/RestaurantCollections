@@ -7,18 +7,16 @@ module RestaurantCollections
   # Web controller for RestaurantCollections API
   class Api < Roda
     route('restaurants') do |routing|
-      unauthorized_message = { message: 'Uauthorized Request'}.to_json
-      routing.halt(403, unauthorized_message) unless @auth_account
+      routing.halt(403, UNAUTH_MSG) unless @auth_account
 
       @rest_route = "#{@api_root}/restaurants"
       routing.on String do |restaurant_id|
         @req_restaurant = Restaurant.first(id: restaurant_id)
 
-        # GET api/v1/restaurants[restaurant_id]
+        # GET api/v1/restaurants/[restaurant_id]
         routing.get do
-          restaurant = GetRestaurantQuery.call(
-            account: @auth_account, restaurant: @req_restaurant
-          )
+          #binding.pry
+          restaurant = GetRestaurantQuery.call(auth: @auth, restaurant: @req_restaurant)
 
           { data: restaurant }.to_json
         rescue GetRestaurantQuery::ForbiddenError => e
@@ -34,7 +32,7 @@ module RestaurantCollections
           # POST api/v1/restaurants/[restaurant_id]/comments
           routing.post do
             new_comment = CreateCommentForRestaurant.call(
-              account: @auth_account,
+              auth: @auth,
               restaurant: @req_restaurant,
               comment_data: JSON.parse(routing.body.read)
             )
@@ -58,7 +56,7 @@ module RestaurantCollections
             req_data = JSON.parse(routing.body.read)
 
             collaborator = AddCollaboratorToRestaurant.call(
-              account: @auth_account,
+              auth: @auth,
               restaurant: @req_restaurant,
               collab_email: req_data['email']
             )
@@ -74,7 +72,7 @@ module RestaurantCollections
           routing.delete do
             req_data = JSON.parse(routing.body.read)
             collaborator = RemoveCollaborator.call(
-              req_username: @auth_account.username,
+              auth: @auth,
               collab_email: req_data['email'],
               restaurant_id: restaurant_id
             )
@@ -102,19 +100,20 @@ module RestaurantCollections
         # POST api/v1/restaurants
         routing.post do
           new_data = JSON.parse(routing.body.read)
-          puts "Data for restaurant in api: #{new_data}"
-          new_rest = @auth_account.add_owned_restaurant(new_data)
-          puts "New restaurant in api: #{new_rest}"
-          raise('Could not save Restaurant') unless new_rest.save
+
+          new_rest = CreateRestaurantForOwner.call(
+            auth: @auth, restaurant_data: new_data
+          )
 
           response.status = 201
-          response['Location'] = "#{@restaurant_id}/#{new_rest.id}"
+          response['Location'] = "#{@rest_route}/#{new_rest.id}"
           { message: 'Restaurant saved', data: new_rest }.to_json
-          
         rescue Sequel::MassAssignmentRestriction
           routing.halt 400, { message: 'Illegal Request' }.to_json
-        rescue StandardError => e
-          routing.halt 500, { message: e.message }.to_json
+        rescue CreateRestaurantForOwner::ForbiddenError => e
+          routing.halt 403, { message: e.message }.to_json
+        rescue StandardError
+          routing.halt 500, { message: 'API server error' }.to_json
         end
       end
     end

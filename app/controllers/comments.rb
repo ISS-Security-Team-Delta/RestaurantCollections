@@ -18,7 +18,7 @@ module RestaurantCollections
 
         routing.get do
           comment = GetCommentQuery.call(
-            requestor: @auth_account, comment: @req_comment
+            auth: @auth, comment: @req_comment
           )
 
           { data: comment }.to_json
