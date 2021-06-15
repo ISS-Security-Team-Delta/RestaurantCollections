@@ -38,8 +38,8 @@ module RestaurantCollections
             )
 
             response.status = 201
-            response['Location'] = "#{@com_route}/#{new_com.id}"
-            { message: 'Comment saved', data: new_com }.to_json
+            response['Location'] = "#{@com_route}/#{new_comment.id}"
+            { message: 'Comment saved', data: new_comment }.to_json
           rescue CreateCommentForRestaurant::ForbiddenError => e
             routing.halt 403, { message: e.message }.to_json
           rescue CreateCommentForRestaurant::IllegalRequestError => e
