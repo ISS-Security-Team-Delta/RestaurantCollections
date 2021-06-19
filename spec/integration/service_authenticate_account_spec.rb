@@ -2,6 +2,7 @@
 
 require_relative '../spec_helper'
 
+
 describe 'Test AddCollaboratorToProject service' do
   before do
     wipe_database
@@ -25,7 +26,7 @@ describe 'Test AddCollaboratorToProject service' do
       RestaurantCollections::AuthenticateAccount.call(
         username: credentials['username'], password: 'malword'
       )
-    }).must_raise RestaurantCollections::UnauthorizedError
+    }).must_raise RestaurantCollections::AuthenticateAccount::UnauthorizedError
   end
 
   it 'BAD: will not authenticate with invalid credentials' do
@@ -33,6 +34,6 @@ describe 'Test AddCollaboratorToProject service' do
       RestaurantCollections::AuthenticateAccount.call(
         username: 'maluser', password: 'malword'
       )
-    }).must_raise RestaurantCollections::UnauthorizedError
+    }).must_raise RestaurantCollections::AuthenticateAccount::UnauthorizedError
   end
 end
