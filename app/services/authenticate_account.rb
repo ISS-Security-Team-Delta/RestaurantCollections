@@ -22,7 +22,7 @@ module RestaurantCollections
       end
       account_and_token(account)
     end
-    
+
     def self.account_and_token(account)
     {
       type: 'authenticated_account',
