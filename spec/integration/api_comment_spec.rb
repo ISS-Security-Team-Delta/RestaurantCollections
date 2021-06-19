@@ -8,77 +8,115 @@ describe 'Test Comment Handling' do
   before do
     wipe_database
 
-    DATA[:restaurants].each do |rest_data|
-      RestaurantCollections::Restaurant.create(rest_data)
-    end
-    @rest = RestaurantCollections::Restaurant.first
-    @com_data = DATA[:comments][1]
-    @req_header = { 'CONTENT_TYPE' => 'application/json' }
+    @account_data = DATA[:accounts][0]
+    @wrong_account_data = DATA[:accounts][1]
+
+    @account = RestaurantCollections::Account.create(@account_data)
+    @account.add_owned_restaurant(DATA[:restaurants][0])
+    @account.add_owned_restaurant(DATA[:restaurants][1])
+    RestaurantCollections::Account.create(@wrong_account_data)
+
+    header 'CONTENT_TYPE', 'application/json'
   end
 
-  it 'HAPPY: should be able to get list of all comments' do
-    DATA[:comments].each do |com|
-      post "api/v1/restaurants/#{@rest.id}/comments", com.to_json, @req_header
+  describe 'Getting a single comment' do
+    it 'HAPPY: should be able to get details of a single comment' do
+      com_data = DATA[:comments][0]
+      rest = @account.restaurants.first
+      com = rest.add_comment(com_data)
+
+      header 'AUTHORIZATION', auth_header(@account_data)
+      get "/api/v1/comments/#{com.id}"
+      _(last_response.status).must_equal 200
+
+      result = JSON.parse(last_response.body)['data']
+      _(result['attributes']['id']).must_equal com.id
     end
 
-    get "api/v1/restaurants/#{@rest.id}/comments"
-    _(last_response.status).must_equal 200
+    it 'SAD AUTHORIZATION: should not get details without authorization' do
+      com_data = DATA[:comments][1]
+      rest = RestaurantCollections::Restaurant.first
+      com = rest.add_comment(com_data)
 
-    result = JSON.parse last_response.body
-    _(result['data'].count).must_equal 2
-    result['data'].each do |com|
-      _(com['data']['type']).must_equal 'comment'
+      get "/api/v1/comments/#{com.id}"
+
+      result = JSON.parse last_response.body
+
+      _(last_response.status).must_equal 403
+      _(result['attributes']).must_be_nil
     end
-  end
 
-  it 'HAPPY: should be able to get details of a single comment' do
-    post "api/v1/restaurants/#{@rest.id}/comments", @com_data.to_json, @req_header
+    it 'BAD AUTHORIZATION: should not get details with wrong authorization' do
+      com_data = DATA[:comments][0]
+      rest = @account.restaurants.first
+      com = rest.add_comment(com_data)
 
-    created_com = JSON.parse(last_response.body)['data']['data']['attributes']
+      header 'AUTHORIZATION', auth_header(@wrong_account_data)
+      get "/api/v1/comments/#{com.id}"
 
-    get last_response.header['Location']
-    _(last_response.status).must_equal 200
+      result = JSON.parse last_response.body
 
-    result = JSON.parse last_response.body
-    _(result['data']['attributes']['id']).must_equal created_com['id']
-    _(result['data']['attributes']['content']).must_equal created_com['content']
-  end
+      _(last_response.status).must_equal 403
+      _(result['attributes']).must_be_nil
+    end
 
-  it 'SAD: should return error if unknown comment requested' do
-    rest = RestaurantCollections::Restaurant.first
-    get "/api/v1/restaurants/#{rest.id}/comments/foobar"
+    it 'SAD: should return error if comment does not exist' do
+      header 'AUTHORIZATION', auth_header(@account_data)
+      get '/api/v1/comments/foobar'
 
-    _(last_response.status).must_equal 404
+      _(last_response.status).must_equal 404
+    end
   end
 
   describe 'Creating Comments' do
     before do
       @rest = RestaurantCollections::Restaurant.first
       @com_data = DATA[:comments][1]
-      @req_header = { 'CONTENT_TYPE' => 'application/json' }
     end
 
-    it 'HAPPY: should be able to create new comments' do
-      post "api/v1/restaurants/#{@rest.id}/comments",
-           @com_data.to_json, @req_header
+    it 'HAPPY: should be able to create when everything correct' do
+      header 'AUTHORIZATION', auth_header(@account_data)
+      post "api/v1/restaurants/#{@rest.id}/comments", @com_data.to_json
       _(last_response.status).must_equal 201
       _(last_response.header['Location'].size).must_be :>, 0
 
-      created = JSON.parse(last_response.body)['data']['data']['attributes']
-      com = RestaurantCollections::Restaurant.first
-      
-      _(created['content']).must_equal @com_data['content']
-      _(created['like']).must_equal @com_data['like']
+      created = JSON.parse(last_response.body)['data']['attributes']
+      com = RestaurantCollections::Comment.first
+
+      _(created['id']).must_equal com.id
     end
 
-    it 'SECURITY: should not create comments with mass assignment' do
+    it 'BAD AUTHORIZATION: should not create with incorrect authorization' do
+      header 'AUTHORIZATION', auth_header(@wrong_account_data)
+      post "api/v1/restaurants/#{@rest.id}/comments", @com_data.to_json
+
+      data = JSON.parse(last_response.body)['data']
+
+      _(last_response.status).must_equal 403
+      _(last_response.header['Location']).must_be_nil
+      _(data).must_be_nil
+    end
+
+    it 'SAD AUTHORIZATION: should not create without any authorization' do
+      post "api/v1/restaurants/#{@rest.id}/comments", @com_data.to_json
+
+      data = JSON.parse(last_response.body)['data']
+
+      _(last_response.status).must_equal 403
+      _(last_response.header['Location']).must_be_nil
+      _(data).must_be_nil
+    end
+
+    it 'BAD VULNERABILITY: should not create with mass assignment' do
       bad_data = @com_data.clone
       bad_data['created_at'] = '1900-01-01'
-      post "api/v1/restaurants/#{@rest.id}/comments",
-           bad_data.to_json, @req_header
+      header 'AUTHORIZATION', auth_header(@account_data)
+      post "api/v1/restaurants/#{@rest.id}/comments", bad_data.to_json
 
+      data = JSON.parse(last_response.body)['data']
       _(last_response.status).must_equal 400
       _(last_response.header['Location']).must_be_nil
+      _(data).must_be_nil
     end
   end
 end
