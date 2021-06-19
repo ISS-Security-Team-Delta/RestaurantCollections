@@ -35,7 +35,7 @@ module RestaurantCollections
         routing.post do
           auth_account = AuthenticateAccount.call(@request_data)
           { data: auth_account }.to_json
-        rescue AuthenticateAccount::UnauthorizedError => e
+        rescue RestaurantCollections::UnauthorizedError => e
           puts [e.class, e.message].join ': '
           routing.halt '401', { message: 'Invalid credentials' }.to_json
         end
