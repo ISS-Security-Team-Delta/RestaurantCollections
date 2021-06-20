@@ -12,3 +12,16 @@ Install this API by cloning the relevant branch and installing required gems fro
 ``` 
 bundle install
 ```
+
+### Execute
+
+```
+bundle exec rake run:dev
+```
+
+
+### Test
+
+```
+rake spec
+```
