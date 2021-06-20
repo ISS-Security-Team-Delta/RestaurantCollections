@@ -37,7 +37,7 @@ def authorization(account_data)
 end
 
 DATA = {
-  accounts: YAML.load(File.read('app/db/seeds/accounts_seed.yml')),
-  comments: YAML.load(File.read('app/db/seeds/comments_seed.yml')),
-  restaurants: YAML.load(File.read('app/db/seeds/restaurants_seed.yml'))
+  accounts: YAML.load(File.read('app/db/seeds/accounts_seeds.yml')),
+  comments: YAML.load(File.read('app/db/seeds/comments_seeds.yml')),
+  restaurants: YAML.load(File.read('app/db/seeds/restaurants_seeds.yml'))
 }.freeze
