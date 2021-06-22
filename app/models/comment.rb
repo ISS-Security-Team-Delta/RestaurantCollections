@@ -26,13 +26,11 @@ module RestaurantCollections
     def to_json(options = {})
       JSON(
         {
-          data: {
-            type: 'comment',
-            attributes: {
-              id: id,
-              content: content,
-              like: like
-            }
+          type: 'comment',
+          attributes: {
+            id: id,
+            content: content,
+            like: like
           },
           included: {
             restaurant: restaurant

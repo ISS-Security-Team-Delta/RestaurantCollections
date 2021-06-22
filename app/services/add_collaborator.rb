@@ -2,7 +2,7 @@
 
 module RestaurantCollections
   # Add a collaborator to another owner's existing restaurant
-  class AddCollaboratorToRestaurant
+  class AddCollaborator
     # Error for owner cannot be collaborator
     class ForbiddenError < StandardError
       def message
