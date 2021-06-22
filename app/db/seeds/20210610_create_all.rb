@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require './app/controllers/helpers.rb'
+include RestaurantCollections::SecureRequestHelpers
+
 Sequel.seed(:development) do
   def run
     puts 'Seeding accounts, restaurants, comments'
@@ -26,12 +29,10 @@ end
 
 def create_owned_restaurants
   OWNER_INFO.each do |owner|
-    account = Credence::Account.first(username: owner['username'])
+    account = RestaurantCollections::Account.first(username: owner['username'])
     owner['rest_name'].each do |rest_name|
       rest_data = REST_INFO.find { |rest| rest['name'] == rest_name }
-      RestaurantCollections::CreateRestaurantForOwner.call(
-        owner_id: account.id, restaurant_data: rest_data
-      )
+      account.add_owned_restaurant(rest_data)
     end
   end
 end
@@ -42,8 +43,12 @@ def create_comments
   loop do
     com_info = com_info_each.next
     restaurant = restaurants_cycle.next
-    RestaurantCollections::CreateCommentForRestaurant.call(
-      restaurant_id: restaurant.id, comment_data: com_info
+
+    auth_token = AuthToken.create(restaurant.owner)
+    auth = scoped_auth(auth_token)
+
+    RestaurantCollections::CreateComment.call(
+      auth: auth, restaurant: restaurant, comment_data: com_info
     )
   end
 end
@@ -51,10 +56,15 @@ end
 def add_collaborators
   contrib_info = CONTRIB_INFO
   contrib_info.each do |contrib|
-    rest = RestaurantCollections::Restaurant.first(name: contrib['rest_name'])
+    restaurant = RestaurantCollections::Restaurant.first(name: contrib['rest_name'])
+
+    auth_token = AuthToken.create(restaurant.owner)
+    auth = scoped_auth(auth_token)
+
     contrib['collaborator_email'].each do |email|
-      collaborator = RestaurantCollections::Account.first(email: email)
-      rest.add_collaborator(collaborator)
+      RestaurantCollections::AddCollaborator.call(
+        auth: auth, restaurant: restaurant, collab_email: email
+      )
     end
   end
 end
