@@ -13,9 +13,9 @@ module RestaurantCollections
                  class: :'RestaurantCollections::Restaurant',
                  join_table: :accounts_restaurants,
                  left_key: :collaborator_id, right_key: :restaurant_id
-    
-    plugin :association_dependencies, 
-           owned_restaurants: :destroy, 
+
+    plugin :association_dependencies,
+           owned_restaurants: :destroy,
            collaborations: :nullify
 
     plugin :whitelist_security
@@ -26,6 +26,11 @@ module RestaurantCollections
     def self.create_github_account(github_account)
       create(username: github_account[:username],
              email: github_account[:email])
+    end
+
+    def self.create_google_account(google_account)
+      create(username: google_account[:username],
+          email: google_account[:email])
     end
 
     def restaurants

@@ -27,6 +27,9 @@ end
 # Sendgrid
 gem 'sendgrid-ruby'
 
+# Google Oauth Id Verify
+gem 'google-id-token'
+
 # External Services
 gem 'http'
 
