@@ -50,6 +50,28 @@ module RestaurantCollections
           end
         end
 
+        routing.on 'meals' do
+          # POST api/v1/restaurants/[restaurant_id]/meals
+          routing.post do
+            new_meal = CreateMealForRestaurant.call(
+              auth: @auth,
+              restaurant: @req_restaurant,
+              meal_data: JSON.parse(routing.body.read)
+            )
+
+            response.status = 201
+            response['Location'] = "#{@meal_route}/#{new_meal.id}"
+            { message: 'Meal saved', data: new_meal }.to_json
+          rescue CreateMealForRestaurant::ForbiddenError => e
+            routing.halt 403, { message: e.message }.to_json
+          rescue CreateMealForRestaurant::IllegalRequestError => e
+            routing.halt 400, { message: e.message }.to_json
+          rescue StandardError => e
+            puts "CREATE_MEAL_ERROR: #{e.inspect}"
+            routing.halt 500, { message: 'API server error' }.to_json
+          end
+        end
+
         routing.on('collaborators') do
           # PUT api/v1/restaurants/[restaurant_id]/collaborators
           routing.put do
@@ -87,7 +109,7 @@ module RestaurantCollections
         end
       end
 
-      routing .is do
+      routing.is do
         # GET api/v1/restaurants
         routing.get do
           restaurants = RestaurantPolicy::AccountScope.new(@auth_account).viewable
@@ -100,7 +122,7 @@ module RestaurantCollections
         # POST api/v1/restaurants
         routing.post do
           new_data = JSON.parse(routing.body.read)
-
+          puts "Entered API putting data from route: #{new_data}"
           new_rest = CreateRestaurantForOwner.call(
             auth: @auth, restaurant_data: new_data
           )
@@ -119,5 +141,3 @@ module RestaurantCollections
     end
   end
 end
-
-#{"data":{"type":"restaurant","attributes":{"id":402,"website":"hehept2.com","name":"hehe2","address":"hehe2 street","menu":"yummy food pt 2"}}}

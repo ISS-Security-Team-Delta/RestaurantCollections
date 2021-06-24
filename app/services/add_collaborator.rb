@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require './app/policies/collaboration_request_policy'
+
 module RestaurantCollections
   # Add a collaborator to another owner's existing restaurant
   class AddCollaborator

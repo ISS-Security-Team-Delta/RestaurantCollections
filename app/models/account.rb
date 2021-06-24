@@ -57,5 +57,10 @@ module RestaurantCollections
         }, options
       )
     end
+
+    def self.create_github_account(github_account)
+      create(username: github_account[:username],
+             email: github_account[:email])
+    end
   end
 end

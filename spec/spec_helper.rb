@@ -10,6 +10,7 @@ require_relative 'test_load_all'
 
 def wipe_database
   RestaurantCollections::Comment.map(&:destroy)
+  RestaurantCollections::Meal.map(&:destroy)
   RestaurantCollections::Restaurant.map(&:destroy)
   RestaurantCollections::Account.map(&:destroy)
 end
@@ -37,9 +38,10 @@ def authorization(account_data)
 end
 
 DATA = {
-  accounts: YAML.load(File.read('app/db/seeds/accounts_seeds.yml')),
-  comments: YAML.load(File.read('app/db/seeds/comments_seeds.yml')),
-  restaurants: YAML.load(File.read('app/db/seeds/restaurants_seeds.yml'))
+  accounts: YAML.load(File.read('app/db/seeds/accounts_seed.yml')),
+  comments: YAML.load(File.read('app/db/seeds/comments_seed.yml')),
+  meals: YAML.load(File.read('app/db/seeds/meals_seed.yml')),
+  restaurants: YAML.load(File.read('app/db/seeds/restaurants_seed.yml'))
 }.freeze
 
 ## SSO fixtures
