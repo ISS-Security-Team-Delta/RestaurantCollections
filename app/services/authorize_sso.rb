@@ -14,11 +14,7 @@ module RestaurantCollections
 
     def get_github_account(access_token)
       gh_response = HTTP.headers(
-<<<<<<< HEAD
-        user_agent: 'Credence',
-=======
         user_agent: 'RestaurantCollections',
->>>>>>> 0e0c4f1edda77591288676256c685d1d5eacdb64
         authorization: "token #{access_token}",
         accept: 'application/json'
       ).get(ENV['GITHUB_ACCOUNT_URL'])
