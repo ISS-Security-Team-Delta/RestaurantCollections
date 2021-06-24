@@ -4,13 +4,14 @@ require 'sequel'
 
 Sequel.migration do
   change do
-    create_table(:restaurants) do
+    create_table(:meals) do
       primary_key :id
-      foreign_key :owner_id, :accounts
+      foreign_key :restaurant_id, table: :restaurants
 
       String :name, unique: true, null: false
-      String :website, unique: true
-      String :address, unique: true
+      String :description, unique: true
+      String :type, null: false
+      Float :price, null: false
 
       DateTime :created_at
       DateTime :updated_at
