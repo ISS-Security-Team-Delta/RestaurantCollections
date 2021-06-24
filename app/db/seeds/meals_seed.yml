@@ -1,0 +1,17 @@
+---
+- name: 6-Inch Tuna Sub Combo
+  description: Tuna Sandwich with egg mayo, tomato, lettuce, cucumbers and nice sauces. 
+  type: Sandwich 
+  price: 125
+- name: Chicken Teriyaki Salad Meal
+  description: It's a SALAAAD!! 
+  type: Salad
+  price: 185
+- name: Extra Large Combo with Crispy Chicken Drumstick Burger
+  description: Contains 1 drumstick, 1 crispy chicken, 4 colonel's chicken nuggets, 1 cup of medium coke and 1 original egg tart. 
+  type: Fast Food
+  price: 189
+- name: Popcorn Chicken(Large)
+  description: A bunch of popcorn chicken lol nothing much to say
+  type: Snack
+  price: 45

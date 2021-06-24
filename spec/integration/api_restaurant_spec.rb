@@ -44,7 +44,7 @@ describe 'Test Restaurant Handling' do
 
     it 'HAPPY: should be able to get details of a single restaurant' do
       rest = @account.add_owned_restaurant(DATA[:restaurants][0])
-
+      rest.add_meal(DATA[:meals][0])
       header 'AUTHORIZATION', auth_header(@account_data)
       get "/api/v1/restaurants/#{rest.id}"
       _(last_response.status).must_equal 200

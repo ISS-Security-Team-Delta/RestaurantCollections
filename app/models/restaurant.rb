@@ -15,11 +15,12 @@ module RestaurantCollections
               left_key: :restaurant_id, right_key: :collaborator_id
 
     one_to_many :comments
-    plugin :association_dependencies, comments: :destroy, collaborators: :nullify
+    one_to_many :meals
+    plugin :association_dependencies, comments: :destroy, collaborators: :nullify, meals: :destroy
 
     plugin :timestamps
     plugin :whitelist_security
-    set_allowed_columns :website, :name, :address, :menu
+    set_allowed_columns :website, :name, :address
 
     def to_h
       {
@@ -28,8 +29,7 @@ module RestaurantCollections
           id: id,
           website: website,
           name: name,
-          address: address,
-          menu: menu
+          address: address
         }
       }
     end
@@ -39,7 +39,8 @@ module RestaurantCollections
         relationships: {
           owner: owner,
           collaborators: collaborators,
-          comments: comments
+          comments: comments,
+          meals: meals
         }
       )
     end

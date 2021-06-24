@@ -34,6 +34,14 @@ module RestaurantCollections
       can_write? && (account_is_owner? || account_is_collaborator?)
     end
 
+    def can_add_meals?
+      can_write? && (account_is_owner? || account_is_collaborator?)
+    end
+
+    def can_remove_meals?
+      can_write? && (account_is_owner? || account_is_collaborator?)
+    end
+
     def can_add_collaborators?
       can_write? && account_is_owner?
     end
@@ -54,6 +62,8 @@ module RestaurantCollections
         can_leave: can_leave?,
         can_add_comments: can_add_comments?,
         can_delete_comments: can_remove_comments?,
+        can_add_meals: can_add_meals?,
+        can_delete_meals: can_remove_meals?,
         can_add_collaborators: can_add_collaborators?,
         can_remove_collaborators: can_remove_collaborators?,
         can_collaborate: can_collaborate?
