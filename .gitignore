@@ -4,4 +4,4 @@ _*
 app/db/store/*.db
 config/secrets.yml
 coverage/*
-!coverage/.resultest.json
+!coverage/.resultset.json

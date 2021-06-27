@@ -6,6 +6,7 @@ describe 'Test Comment Handling' do
   include Rack::Test::Methods
 
   before do
+    puts "Wiping the database!"
     wipe_database
 
     @account_data = DATA[:accounts][0]
