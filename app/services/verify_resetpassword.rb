@@ -60,7 +60,7 @@ module RestaurantCollections
     rescue StandardError => e
       puts "EMAIL ERROR: #{e.inspect}"
       raise(InvalidRegistration,
-            'Could not send verification email; please check email address')
+            'Could not send password reset email; please check email address')
     end
   end
 end

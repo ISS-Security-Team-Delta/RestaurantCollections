@@ -5,8 +5,10 @@ ENV['RACK_ENV'] = 'test'
 require 'minitest/autorun'
 require 'minitest/rg'
 require 'yaml'
-
 require_relative 'test_load_all'
+
+require 'simplecov'
+SimpleCov.start
 
 def wipe_database
   RestaurantCollections::Comment.map(&:destroy)

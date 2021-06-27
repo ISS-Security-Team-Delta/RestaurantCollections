@@ -23,8 +23,8 @@ module RestaurantCollections
         rescue SignedRequest::VerificationError
           routing.hatl 403, { message: 'Must sign request' }.to_json
         rescue StandardError => e
-          puts "ERROR CREATING ACCOUNT: #{e.inspect}"
-          routing.halt 500, { message: 'Error creating account' }.to_json
+          puts "ERROR RESTING PASSWORD: #{e.inspect}"
+          routing.halt 500, { message: 'Error resting password' }.to_json
         end
       end
 

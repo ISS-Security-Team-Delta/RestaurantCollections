@@ -16,7 +16,7 @@ gem 'rake', '~>13'
 gem 'bundler-audit'
 gem 'rbnacl', '~>7'
 
-# Databas
+# Database
 gem 'hirb', '~>0'
 gem 'sequel', '~>5'
 
@@ -39,6 +39,7 @@ group :test do
   gem 'minitest-rg'
   gem 'webmock'
 end
+gem 'simplecov'
 
 # Debugging
 gem 'pry' # necessary for rake console
