@@ -50,7 +50,7 @@ module RestaurantCollections
         puts error.backtrace
         routing.halt 400
       end
-      
+
       routing.on 'google_sso' do
      # POST /api/v1/auth/google_sso
        routing.post do
@@ -65,6 +65,22 @@ module RestaurantCollections
          routing.halt 400
        end
      end
+      # POST api/v1/auth/resetpwd
+      routing.on 'resetpwd' do
+        routing.post do
+          VerifyResetPassword.new(@request_data).call
+
+          response.status = 202
+          { message: 'Verification email sent' }.to_json
+        rescue VerifyResetPassword::InvalidResetPassword => e
+          puts [e.class, e.message].join ': '
+          routing.halt 400, { message: e.message }.to_json
+        rescue StandardError => e
+          puts "ERROR VERIFYING REGISTRATION: #{e.inspect}"
+          puts e.message
+          routing.halt 500
+        end
+      end
     end
   end
 end

@@ -5,8 +5,10 @@ ENV['RACK_ENV'] = 'test'
 require 'minitest/autorun'
 require 'minitest/rg'
 require 'yaml'
-
 require_relative 'test_load_all'
+
+require 'simplecov'
+SimpleCov.start
 
 def wipe_database
   RestaurantCollections::Comment.map(&:destroy)
@@ -50,4 +52,3 @@ GH_ACCOUNT_RESPONSE = YAML.load(
 )
 GOOD_GH_ACCESS_TOKEN = GH_ACCOUNT_RESPONSE.keys.first
 SSO_ACCOUNT = YAML.load(File.read('spec/fixtures/sso_account.yml'))
-

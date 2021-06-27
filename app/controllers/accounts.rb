@@ -9,6 +9,26 @@ module RestaurantCollections
     route('accounts') do |routing|
       @account_route = "#{@api_root}/accounts"
 
+      # POST api/v1/accounts/resetpwd
+      routing.on 'resetpwd' do
+        routing.post do
+          account_data = SignedRequest.new(Api.config).parse(request.body.read)
+          account = Account.find(email: account_data[:email]).update(account_data)
+
+          response.status = 201
+          response['Location'] = "#{@account_route}/#{account.username}"
+          { message: 'Account saved', data: account }.to_json
+        rescue Sequel::MassAssignmentRestriction
+          routing.halt 400, { message: 'Illegal Attributes' }.to_json
+        rescue SignedRequest::VerificationError
+          routing.hatl 403, { message: 'Must sign request' }.to_json
+        rescue StandardError => e
+          puts "ERROR RESTING PASSWORD: #{e.inspect}"
+          routing.halt 500, { message: 'Error resting password' }.to_json
+        end
+      end
+
+
       routing.on String do |username|
         routing.halt(403, UNAUTH_MSG) unless @auth_account
 
